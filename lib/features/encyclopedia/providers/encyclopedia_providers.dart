@@ -6,6 +6,7 @@ import '../data/encyclopedia_repository.dart';
 import '../data/valorant_api_encyclopedia_repository.dart';
 import '../domain/agent.dart';
 import '../domain/content_tier.dart';
+import '../domain/game_map.dart';
 import '../domain/weapon.dart';
 import '../domain/weapon_skin.dart';
 
@@ -44,4 +45,8 @@ final abilityVideoRepositoryProvider = Provider<AbilityVideoRepository>((ref) {
 /// Agent uuid -> ability name (French, upper case) -> mp4 preview clip url.
 final abilityVideosProvider = FutureProvider<Map<String, Map<String, String>>>((ref) {
   return ref.watch(abilityVideoRepositoryProvider).getVideosByAgent();
+});
+
+final mapsProvider = FutureProvider<List<GameMap>>((ref) {
+  return ref.watch(encyclopediaRepositoryProvider).getMaps();
 });

@@ -1,6 +1,7 @@
 import '../../../core/network/valorant_api_client.dart';
 import '../domain/agent.dart';
 import '../domain/content_tier.dart';
+import '../domain/game_map.dart';
 import '../domain/weapon.dart';
 import '../domain/weapon_skin.dart';
 import 'encyclopedia_repository.dart';
@@ -42,5 +43,18 @@ class ValorantApiEncyclopediaRepository implements EncyclopediaRepository {
     final data = await _client.getList('/contenttiers');
     final tiers = data.map((json) => ContentTier.fromJson(json as Map<String, dynamic>));
     return {for (final tier in tiers) tier.uuid: tier};
+  }
+
+  @override
+  Future<List<GameMap>> getMaps() async {
+    final data = await _client.getList('/maps');
+    final maps = data
+        .map((json) => GameMap.fromJson(json as Map<String, dynamic>))
+        // Deathmatch arenas and the practice range also come back from this
+        // endpoint; real competitive maps are the only ones with site info.
+        .where((map) => map.tacticalDescription != null)
+        .toList();
+    maps.sort((a, b) => a.displayName.compareTo(b.displayName));
+    return maps;
   }
 }

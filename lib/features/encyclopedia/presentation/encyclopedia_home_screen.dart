@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../../../core/widgets/valorant_bottom_nav.dart';
 import 'agents/agents_page.dart';
+import 'maps/maps_page.dart';
 import 'weapons/weapons_page.dart';
 
 /// The app's home: a bottom-nav shell switching between the encyclopedia
-/// sections. Maps and ranks will be added back as their own tabs later.
+/// sections. Ranks will be added back as its own tab later.
 class EncyclopediaHomeScreen extends StatefulWidget {
   const EncyclopediaHomeScreen({super.key});
 
@@ -16,11 +17,12 @@ class EncyclopediaHomeScreen extends StatefulWidget {
 class _EncyclopediaHomeScreenState extends State<EncyclopediaHomeScreen> {
   int _index = 0;
 
-  static const _pages = [AgentsPage(), WeaponsPage()];
+  static const _pages = [AgentsPage(), WeaponsPage(), MapsPage()];
 
   static const _items = [
     ValorantNavItem(label: 'AGENTS', icon: Icons.groups_rounded),
     ValorantNavItem(label: 'ARMES', icon: Icons.gps_fixed),
+    ValorantNavItem(label: 'MAPS', icon: Icons.map_rounded),
   ];
 
   @override
