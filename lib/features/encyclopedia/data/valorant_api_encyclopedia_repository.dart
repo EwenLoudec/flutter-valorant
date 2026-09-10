@@ -1,7 +1,9 @@
 import '../../../core/network/valorant_api_client.dart';
 import '../domain/agent.dart';
+import '../domain/competitive_season.dart';
 import '../domain/content_tier.dart';
 import '../domain/game_map.dart';
+import '../domain/rank_tier.dart';
 import '../domain/weapon.dart';
 import '../domain/weapon_skin.dart';
 import 'encyclopedia_repository.dart';
@@ -56,5 +58,53 @@ class ValorantApiEncyclopediaRepository implements EncyclopediaRepository {
         .toList();
     maps.sort((a, b) => a.displayName.compareTo(b.displayName));
     return maps;
+  }
+
+  @override
+  Future<List<RankTier>> getRankTiers() async {
+    final data = await _client.getList('/competitivetiers');
+    // The last entry in the list is always the current, active episode's tier set.
+    final currentEpisode = data.last as Map<String, dynamic>;
+    final tiers = (currentEpisode['tiers'] as List<dynamic>)
+        .map((json) => RankTier.fromJson(json as Map<String, dynamic>))
+        // Tiers 0-2 are "Unranked" and two unused placeholder slots.
+        .where((tier) => tier.tier >= 3)
+        .toList();
+    tiers.sort((a, b) => a.tier.compareTo(b.tier));
+    return tiers;
+  }
+
+  @override
+  Future<CompetitiveSeason?> getCurrentSeason() async {
+    final data = await _client.getList('/seasons');
+    final now = DateTime.now().toUtc();
+    final seasons = data.cast<Map<String, dynamic>>();
+
+    Map<String, dynamic>? currentAct;
+    for (final season in seasons) {
+      if (season['type'] != 'EAresSeasonType::Act') continue;
+      final start = DateTime.tryParse(season['startTime'] as String? ?? '');
+      final end = DateTime.tryParse(season['endTime'] as String? ?? '');
+      if (start == null || end == null) continue;
+      if (now.isAfter(start) && now.isBefore(end)) {
+        currentAct = season;
+        break;
+      }
+    }
+    if (currentAct == null) return null;
+
+    final parentUuid = currentAct['parentUuid'] as String?;
+    Map<String, dynamic>? parent;
+    for (final season in seasons) {
+      if (season['uuid'] == parentUuid) {
+        parent = season;
+        break;
+      }
+    }
+
+    return CompetitiveSeason(
+      episodeName: parent?['displayName'] as String? ?? '',
+      actName: currentAct['displayName'] as String? ?? '',
+    );
   }
 }

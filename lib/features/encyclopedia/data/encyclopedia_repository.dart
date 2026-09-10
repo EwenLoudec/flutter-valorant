@@ -1,6 +1,8 @@
 import '../domain/agent.dart';
+import '../domain/competitive_season.dart';
 import '../domain/content_tier.dart';
 import '../domain/game_map.dart';
+import '../domain/rank_tier.dart';
 import '../domain/weapon.dart';
 import '../domain/weapon_skin.dart';
 
@@ -10,4 +12,6 @@ abstract class EncyclopediaRepository {
   Future<List<WeaponSkin>> getWeaponSkins(String weaponUuid);
   Future<Map<String, ContentTier>> getContentTiers();
   Future<List<GameMap>> getMaps();
+  Future<List<RankTier>> getRankTiers();
+  Future<CompetitiveSeason?> getCurrentSeason();
 }

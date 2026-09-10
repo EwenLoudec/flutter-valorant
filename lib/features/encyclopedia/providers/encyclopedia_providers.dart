@@ -5,8 +5,10 @@ import '../data/ability_video_repository.dart';
 import '../data/encyclopedia_repository.dart';
 import '../data/valorant_api_encyclopedia_repository.dart';
 import '../domain/agent.dart';
+import '../domain/competitive_season.dart';
 import '../domain/content_tier.dart';
 import '../domain/game_map.dart';
+import '../domain/rank_tier.dart';
 import '../domain/weapon.dart';
 import '../domain/weapon_skin.dart';
 
@@ -49,4 +51,12 @@ final abilityVideosProvider = FutureProvider<Map<String, Map<String, String>>>((
 
 final mapsProvider = FutureProvider<List<GameMap>>((ref) {
   return ref.watch(encyclopediaRepositoryProvider).getMaps();
+});
+
+final rankTiersProvider = FutureProvider<List<RankTier>>((ref) {
+  return ref.watch(encyclopediaRepositoryProvider).getRankTiers();
+});
+
+final currentSeasonProvider = FutureProvider<CompetitiveSeason?>((ref) {
+  return ref.watch(encyclopediaRepositoryProvider).getCurrentSeason();
 });
