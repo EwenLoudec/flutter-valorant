@@ -84,10 +84,15 @@ class TacticalMinimap extends StatelessWidget {
     );
   }
 
+  // Keeps labels off the very edge — the terrain art itself has a blank
+  // margin baked into the square image, and a label centered too close to
+  // the true edge can overlap that margin or overflow the clipped panel.
+  static const _edgeInset = 0.08;
+
   Widget _buildSiteLetter(String letter, Offset normalized, Size size) {
     final color = colorForSuperRegion(letter);
-    final dx = normalized.dx.clamp(0.0, 1.0) * size.width;
-    final dy = normalized.dy.clamp(0.0, 1.0) * size.height;
+    final dx = normalized.dx.clamp(_edgeInset, 1 - _edgeInset) * size.width;
+    final dy = normalized.dy.clamp(_edgeInset, 1 - _edgeInset) * size.height;
 
     return Positioned(
       left: dx,
@@ -119,8 +124,8 @@ class TacticalMinimap extends StatelessWidget {
 
   Widget _buildLabel(MapCallout callout, Offset normalized, Size size, bool isHighlighted) {
     final color = colorForSuperRegion(callout.superRegionName);
-    final dx = normalized.dx.clamp(0.0, 1.0) * size.width;
-    final dy = normalized.dy.clamp(0.0, 1.0) * size.height;
+    final dx = normalized.dx.clamp(_edgeInset, 1 - _edgeInset) * size.width;
+    final dy = normalized.dy.clamp(_edgeInset, 1 - _edgeInset) * size.height;
 
     return Positioned(
       left: dx,

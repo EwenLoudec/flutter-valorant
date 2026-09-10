@@ -38,7 +38,11 @@ foreach ($agent in $agents) {
         }
 
         $result[$agent.uuid] = $abilityMap
-        Write-Host "  found $($abilityMap.Count) videos"
+        if ($abilityMap.Count -lt 4) {
+            Write-Host "  WARNING: only found $($abilityMap.Count) videos" -ForegroundColor Yellow
+        } else {
+            Write-Host "  found $($abilityMap.Count) videos"
+        }
     } catch {
         Write-Host "  FAILED: $($_.Exception.Message)"
         $result[$agent.uuid] = @{}
