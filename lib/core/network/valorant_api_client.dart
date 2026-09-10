@@ -23,4 +23,18 @@ class ValorantApiClient {
     final decoded = jsonDecode(response.body) as Map<String, dynamic>;
     return decoded['data'] as List<dynamic>;
   }
+
+  Future<Map<String, dynamic>> getOne(String path, {Map<String, String>? query}) async {
+    final uri = Uri.parse('$_baseUrl$path').replace(
+      queryParameters: {'language': 'fr-FR', ...?query},
+    );
+
+    final response = await _httpClient.get(uri);
+    if (response.statusCode != 200) {
+      throw Exception('valorant-api.com a répondu ${response.statusCode} pour $path');
+    }
+
+    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+    return decoded['data'] as Map<String, dynamic>;
+  }
 }

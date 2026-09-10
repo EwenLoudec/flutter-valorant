@@ -7,6 +7,7 @@ void main() {
   testWidgets('Home shows the agents page', (WidgetTester tester) async {
     await tester.pumpWidget(const ProviderScope(child: MyApp()));
 
-    expect(find.text('AGENTS'), findsOneWidget);
+    expect(find.text('AGENTS'), findsWidgets);
+    expect(find.text('ARMES'), findsOneWidget);
   });
 }
