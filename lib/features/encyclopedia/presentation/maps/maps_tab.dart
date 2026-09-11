@@ -10,6 +10,7 @@ import '../../../../core/widgets/staggered_fade_slide.dart';
 import '../../data/map_meta_data.dart';
 import '../../domain/game_map.dart';
 import '../../providers/encyclopedia_providers.dart';
+import '../../../training/presentation/map_quiz_page.dart';
 import 'map_detail_screen.dart';
 
 class MapsTab extends ConsumerWidget {
@@ -23,19 +24,25 @@ class MapsTab extends ConsumerWidget {
       value: mapsAsync,
       emptyMessage: 'Aucune carte trouvée.',
       builder: (context, allMaps) {
-        final maps = [...allMaps]..sort((a, b) {
-          final aInPool = kMapMetaData[a.displayName]?.inCompetitivePool ?? false;
-          final bInPool = kMapMetaData[b.displayName]?.inCompetitivePool ?? false;
-          if (aInPool != bInPool) return aInPool ? -1 : 1;
-          return a.displayName.compareTo(b.displayName);
-        });
+        final maps = [...allMaps]
+          ..sort((a, b) {
+            final aInPool = kMapMetaData[a.displayName]?.inCompetitivePool ?? false;
+            final bInPool = kMapMetaData[b.displayName]?.inCompetitivePool ?? false;
+            if (aInPool != bInPool) return aInPool ? -1 : 1;
+            return a.displayName.compareTo(b.displayName);
+          });
 
         return ListView.separated(
           padding: const EdgeInsets.all(12),
-          itemCount: maps.length,
+          // The first row is the training entry, the rest are the maps.
+          itemCount: maps.length + 1,
           separatorBuilder: (_, _) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
-            return StaggeredFadeSlide(index: index, child: _MapCard(map: maps[index]));
+            if (index == 0) return const _TrainingCard();
+            return StaggeredFadeSlide(
+              index: index,
+              child: _MapCard(map: maps[index - 1]),
+            );
           },
         );
       },
@@ -57,7 +64,10 @@ class _MapCard extends StatelessWidget {
       onTap: () => Navigator.of(context).push(
         PageRouteBuilder(
           transitionDuration: const Duration(milliseconds: 380),
-          pageBuilder: (_, animation, _) => FadeTransition(opacity: animation, child: MapDetailScreen(map: map)),
+          pageBuilder: (_, animation, _) => FadeTransition(
+            opacity: animation,
+            child: MapDetailScreen(map: map),
+          ),
         ),
       ),
       child: DecoratedBox(
@@ -121,12 +131,60 @@ class _MapCard extends StatelessWidget {
                         style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 20, letterSpacing: 0.4),
                       ),
                       if (map.tacticalDescription != null)
-                        Text(map.tacticalDescription!, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                        Text(
+                          map.tacticalDescription!,
+                          style: const TextStyle(color: Colors.white70, fontSize: 12),
+                        ),
                     ],
                   ),
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Entry point of the callout training game, on top of the map list.
+class _TrainingCard extends StatelessWidget {
+  const _TrainingCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return PressableScale(
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MapQuizPage())),
+      child: ClipPath(
+        clipper: const DiagonalCutClipper(cut: 10),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppTheme.valorantRed.withValues(alpha: 0.12),
+            border: Border.all(color: AppTheme.valorantRed.withValues(alpha: 0.6)),
+          ),
+          padding: const EdgeInsets.fromLTRB(14, 13, 10, 13),
+          child: Row(
+            children: [
+              const Icon(Icons.sports_esports_outlined, size: 22, color: AppTheme.valorantRed),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'ENTRAÎNEMENT CALLOUTS',
+                      style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                    ),
+                    SizedBox(height: 3),
+                    Text(
+                      'Devine la carte, puis place les callouts au bon endroit.',
+                      style: TextStyle(fontSize: 11.5, color: Colors.white70, height: 1.35),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right, color: AppTheme.valorantRed),
+            ],
           ),
         ),
       ),
