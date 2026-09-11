@@ -87,10 +87,11 @@ class _MapQuizScreenState extends ConsumerState<MapQuizScreen> {
     if (_questionIndex + 1 >= _round.questions.length) {
       final isRecord = await ref.read(quizProgressProvider.notifier).record(
         QuizRun(
-          mapName: widget.map.displayName,
+          kind: QuizKind.map,
+          label: widget.map.displayName,
+          mode: widget.asksMapName ? 'full' : 'focus',
           score: _score,
           maxScore: _round.maxScore,
-          askedMapName: widget.asksMapName,
           playedAt: DateTime.now(),
         ),
       );

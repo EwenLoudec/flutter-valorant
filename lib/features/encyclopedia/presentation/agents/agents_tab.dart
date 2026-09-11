@@ -9,6 +9,7 @@ import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/staggered_fade_slide.dart';
 import '../../domain/agent.dart';
 import '../../providers/encyclopedia_providers.dart';
+import '../../../training/presentation/agent_quiz_page.dart';
 import 'agent_detail_screen.dart';
 import 'agent_role_style.dart';
 import 'role_filter_bar.dart';
@@ -24,6 +25,10 @@ class AgentsTab extends ConsumerWidget {
     return Column(
       children: [
         const RoleFilterBar(),
+        const Padding(
+          padding: EdgeInsets.fromLTRB(12, 0, 12, 12),
+          child: _TrainingCard(),
+        ),
         Expanded(
           child: AsyncListView<Agent>(
             value: agentsAsync,
@@ -154,6 +159,53 @@ class _AgentTile extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Entry point of the agent quiz, above the roster.
+class _TrainingCard extends StatelessWidget {
+  const _TrainingCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return PressableScale(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const AgentQuizPage()),
+      ),
+      child: ClipPath(
+        clipper: const DiagonalCutClipper(cut: 10),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppTheme.valorantRed.withValues(alpha: 0.12),
+            border: Border.all(color: AppTheme.valorantRed.withValues(alpha: 0.6)),
+          ),
+          padding: const EdgeInsets.fromLTRB(14, 12, 10, 12),
+          child: Row(
+            children: [
+              const Icon(Icons.headphones_outlined, size: 22, color: AppTheme.valorantRed),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'ENTRAÎNEMENT AGENTS',
+                      style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                    ),
+                    SizedBox(height: 3),
+                    Text(
+                      'Portraits, icônes, descriptions et sons de compétences.',
+                      style: TextStyle(fontSize: 11.5, color: Colors.white70, height: 1.35),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right, color: AppTheme.valorantRed),
+            ],
           ),
         ),
       ),

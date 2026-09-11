@@ -37,8 +37,14 @@ Toutes les données de jeu (visuels, statistiques, traductions françaises) vien
   <tr>
     <td align="center"><img src="docs/screenshots/skins-picker.png" width="210"><br><sub><b>Collection</b> — cocher ses skins</sub></td>
     <td align="center"><img src="docs/screenshots/profile-skins.png" width="210"><br><sub><b>Mes skins</b> — par rareté</sub></td>
-    <td align="center"><img src="docs/screenshots/map-quiz.png" width="210"><br><sub><b>Entraînement</b> — quelle carte ?</sub></td>
-    <td align="center"><img src="docs/screenshots/map-quiz-answer.png" width="210"><br><sub><b>Entraînement</b> — placer les callouts</sub></td>
+    <td align="center"><img src="docs/screenshots/map-quiz.png" width="210"><br><sub><b>Entraînement cartes</b> — quelle carte ?</sub></td>
+    <td align="center"><img src="docs/screenshots/map-quiz-answer.png" width="210"><br><sub><b>Entraînement cartes</b> — placer les callouts</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/agent-quiz-home.png" width="210"><br><sub><b>Entraînement agents</b> — dix questions tirées au hasard</sub></td>
+    <td align="center"><img src="docs/screenshots/agent-quiz.png" width="210"><br><sub><b>Entraînement agents</b> — portrait, icône, description…</sub></td>
+    <td align="center"><img src="docs/screenshots/agent-quiz-sound.png" width="210"><br><sub><b>Manche sonore</b> — à qui est cette capacité ?</sub></td>
+    <td align="center"><img src="docs/screenshots/agent-quiz-sound-pair.png" width="210"><br><sub><b>Manche sonore</b> — et sur le même son, laquelle ?</sub></td>
   </tr>
 </table>
 
@@ -85,6 +91,18 @@ autres outils restent sur navigateur.
 
 ### 🧑‍🚀 Agents
 - Liste complète des agents jouables, filtrable par rôle (duelliste, initiateur, contrôleur, sentinelle).
+- **Entraînement agents** — dix questions tirées au hasard, mêlant cinq types :
+  reconnaître un agent à son **portrait**, nommer une compétence sur son **icône**, retrouver
+  **à qui** elle appartient, l'identifier depuis sa **description officielle**, et la
+  reconnaître **à l'oreille**.
+- **La manche sonore va par deux** : le clip officiel est joué *sans son image*, seul le son
+  compte. On te demande d'abord **à quel agent** appartient la capacité, puis, sur le même
+  extrait, **quelle capacité** c'est — la première correction se garde donc bien de la nommer.
+  Environ la moitié des clips de Riot sont muets : `scripts/scan_ability_sounds.dart` les
+  écoute tous et ne retient dans `assets/data/ability_sounds.json` que ceux qui ont vraiment
+  une piste audio (52 clips, 14 agents), pour qu'une question ne tombe jamais sur du silence.
+- Quatre propositions par question, correction immédiate qui nomme l'agent et la compétence,
+  1000 points en jeu, record et historique conservés sur l'appareil.
 - Fiche détaillée : portrait, description, dégradé de couleurs officiel, et les 4 compétences dépliables.
 - Aperçu vidéo de chaque compétence (clips officiels de playvalorant.com, pré-collectés dans
   `assets/data/ability_videos.json` via `scripts/scrape_ability_videos.ps1`).
@@ -174,7 +192,7 @@ lib/
    │  ├─ domain/ data/ presentation/ providers/
    ├─ lineups/                  # spots sur le plan tactique + éditeur
    │  ├─ domain/ data/ presentation/ providers/
-   ├─ training/                 # mini-jeu : reconnaître la carte, placer les callouts
+   ├─ training/                 # mini-jeux : callouts sur le plan, quiz agents
    │  ├─ domain/ data/ presentation/ providers/
    └─ profile/                  # Riot ID, rang, historique, précision, skins
       ├─ domain/ data/ presentation/ providers/
@@ -208,6 +226,13 @@ slot de compétence, callouts) :
 
 ```bash
 dart run scripts/validate_lineups.dart
+```
+
+La liste des extraits sonores se reconstruit quand Riot publie de nouveaux clips : le script
+les télécharge tous et ne garde que ceux qui portent réellement une piste audio.
+
+```bash
+dart run scripts/scan_ability_sounds.dart
 ```
 
 ---

@@ -67,6 +67,7 @@ flutter:
   assets:
     - assets/data/ability_videos.json
     - assets/data/lineups.json
+    - assets/data/ability_sounds.json
 
   # To add assets to your application, add an assets section, like this:
   # assets:

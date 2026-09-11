@@ -96,7 +96,7 @@ class MapQuizPage extends ConsumerWidget {
               for (final map in playable) ...[
                 _MapRow(
                   map: map,
-                  bestScore: progress?.bestFor(map.displayName, askedMapName: false),
+                  bestScore: progress?.bestForMap(map.displayName, askedMapName: false),
                   onTap: () => _play(context, map, playable, asksMapName: false),
                 ),
                 const SizedBox(height: 8),

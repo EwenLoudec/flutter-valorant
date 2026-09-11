@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../data/ability_sound_source.dart';
 import '../data/quiz_score_store.dart';
 import '../domain/quiz_run.dart';
 
@@ -16,9 +17,12 @@ class QuizProgress {
   /// Most recent game first.
   final List<QuizRun> history;
 
-  int? bestFor(String mapName, {required bool askedMapName}) {
+  int? bestForMap(String mapName, {required bool askedMapName}) {
     return bestScores['$mapName|${askedMapName ? 'full' : 'focus'}'];
   }
+
+  /// The agent exercise has a single mode.
+  int? get bestForAgents => bestScores['${QuizKind.agent.code}|Agents|mixed'];
 }
 
 class QuizProgressNotifier extends AsyncNotifier<QuizProgress> {
@@ -52,3 +56,10 @@ class QuizProgressNotifier extends AsyncNotifier<QuizProgress> {
 final quizProgressProvider = AsyncNotifierProvider<QuizProgressNotifier, QuizProgress>(
   QuizProgressNotifier.new,
 );
+
+final abilitySoundSourceProvider = Provider<AbilitySoundSource>((ref) => AbilitySoundSource());
+
+/// The ability clips with real sound, for the listening questions.
+final abilitySoundsProvider = FutureProvider<Map<String, Map<String, String>>>((ref) {
+  return ref.watch(abilitySoundSourceProvider).getSoundsByAgent();
+});

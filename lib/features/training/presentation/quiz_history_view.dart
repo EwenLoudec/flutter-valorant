@@ -80,12 +80,12 @@ class _HistoryRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    run.mapName.toUpperCase(),
+                    run.label.toUpperCase(),
                     style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800, letterSpacing: 0.3),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '${run.askedMapName ? 'Partie complète' : 'Ciblé'} · ${_formatDate(run.playedAt)}',
+                    '${run.kind.label} · ${run.modeLabel} · ${_formatDate(run.playedAt)}',
                     style: const TextStyle(fontSize: 10.5, color: AppTheme.valorantMuted),
                   ),
                 ],
