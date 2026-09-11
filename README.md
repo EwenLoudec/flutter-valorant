@@ -1,6 +1,6 @@
 # Valorant Companion
 
-Application mobile **Flutter** dédiée à Valorant : une encyclopédie complète du jeu
+Application mobile **Flutter** dédiée à Valorant : des lineups posés sur le plan tactique, une encyclopédie complète du jeu
 (agents, armes, cartes, rangs) doublée d'une page profil qui affiche vos statistiques
 de joueur à partir de votre Riot ID.
 
@@ -16,6 +16,12 @@ Toutes les données de jeu (visuels, statistiques, traductions françaises) vien
 ## Aperçu
 
 <table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/lineups-list.png" width="230"><br><sub><b>Lineups</b> — les spots sur le plan</sub></td>
+    <td align="center"><img src="docs/screenshots/lineup-detail.png" width="230"><br><sub><b>Fiche d'un spot</b> — zooms du plan, compétence, étapes</sub></td>
+    <td align="center"><img src="docs/screenshots/lineup-demo.png" width="230"><br><sub><b>Démo vidéo</b> — lue dans la fiche</sub></td>
+    <td align="center"><img src="docs/screenshots/lineup-editor.png" width="230"><br><sub><b>Éditeur</b> — points, étapes, photos</sub></td>
+  </tr>
   <tr>
     <td align="center"><img src="docs/screenshots/agents.png" width="210"><br><sub><b>Agents</b> — filtre par rôle</sub></td>
     <td align="center"><img src="docs/screenshots/agent-detail.png" width="210"><br><sub><b>Fiche agent</b> — compétences</sub></td>
@@ -39,7 +45,40 @@ Toutes les données de jeu (visuels, statistiques, traductions françaises) vien
 
 ## Fonctionnalités
 
-L'app est organisée en 5 onglets.
+L'app est organisée en 6 onglets.
+
+### 🎯 Lineups
+Le cœur de l'app : les spots d'utilitaire posés directement sur le plan tactique, là où les
+autres outils restent sur navigateur.
+
+- Un plan par carte avec **tous les spots dessinés** : arc de lancer entre la position et le
+  point visé, losange pour un emplacement à poser, couleur selon le camp (attaque / défense).
+  Les spots partageant les mêmes repères se déploient en éventail pour rester lisibles.
+- Filtres par agent et par camp, et sélection croisée : on touche un marqueur, la fiche
+  correspondante se met en avant dans la liste.
+- **Un zoom du plan sur chaque point** : la fiche affiche un gros plan de la minimap Riot
+  centré sur la position de lancer et un autre sur le point visé, avec leur marqueur, **les
+  callouts voisins** et la flèche de trajectoire qui sort du cadre — on sait quel coin de
+  pièce on regarde, au lieu d'un point perdu sur la carte entière.
+- **Ce que fait la compétence**, repris mot pour mot du catalogue officiel (icône, touche et
+  description FR), pour lire un spot d'un agent qu'on ne joue jamais.
+- **Une fiche en 4 étapes**, parce qu'un trait sur un plan ne suffit pas à rejouer un lancer :
+  **1. Se placer** (où poser ses pieds) · **2. Viser** (ce que le viseur doit toucher) ·
+  **3. Lancer** (simple, clic droit, saut-lancer, saut + lancer, accroupi) · **4. Résultat**.
+  Chaque étape accepte sa photo, et le résultat accepte une vidéo. Une barre de progression
+  indique ce qui manque encore, et la liste affiche le même « Fiche 2/4 ».
+- **Une vidéo de démo sur chaque spot** : le lecteur YouTube est intégré à la fiche, donc la
+  démo se regarde sans quitter le spot (le créateur garde ses vues et son attribution). Les
+  **97 spots arrivent avec une vidéo de la communauté épinglée** et son titre affiché : 20
+  sont propres au couple agent + carte, les autres sont le guide « toutes cartes » de
+  l'agent. Deux boutons complètent : une recherche vidéo ciblée sur le trajet exact, et les
+  lineups de la carte sur un site communautaire. Tu peux remplacer n'importe quelle vidéo
+  épinglée par la tienne.
+- **Éditeur intégré** : on place les deux points au doigt sur le plan, on choisit l'agent et
+  la compétence (les 29 agents du catalogue, avec leurs icônes), le camp, la difficulté, les
+  quatre étapes et les médias. Tout est enregistré sur l'appareil.
+- **97 spots livrés avec l'app**, couvrant les 29 agents sur les 13 cartes. Ils servent de
+  point de départ : voir les limites plus bas.
 
 ### 🧑‍🚀 Agents
 - Liste complète des agents jouables, filtrable par rôle (duelliste, initiateur, contrôleur, sentinelle).
@@ -118,6 +157,8 @@ lib/
 └─ features/
    ├─ encyclopedia/             # agents, armes, cartes, rangs
    │  ├─ domain/ data/ presentation/ providers/
+   ├─ lineups/                  # spots sur le plan tactique + éditeur
+   │  ├─ domain/ data/ presentation/ providers/
    └─ profile/                  # Riot ID, rang, historique, précision, skins
       ├─ domain/ data/ presentation/ providers/
 ```
@@ -130,6 +171,10 @@ Quelques principes suivis dans le code :
   et v4, chaque lecture accepte les deux écritures.
 - Chaque section de la page profil gère ses propres états chargement / erreur / vide :
   une requête qui échoue n'efface pas le reste de la page.
+- Les spots sont ancrés soit sur des **coordonnées exactes** (celles posées dans l'éditeur),
+  soit sur un **callout** résolu au chargement via la transformation monde → minimap de Riot.
+  Un spot qui pointerait vers un callout absent de la carte est masqué plutôt que dessiné
+  au mauvais endroit.
 
 ### Qualité
 
@@ -141,10 +186,32 @@ flutter analyze
 flutter test
 ```
 
+Les spots livrés se vérifient en plus contre les données vivantes de Riot (carte, agent,
+slot de compétence, callouts) :
+
+```bash
+dart run scripts/validate_lineups.dart
+```
+
 ---
 
 ## Limites connues
 
+- **Les 97 spots livrés sont des squelettes, pas des lineups vérifiées.** Ils disent quel
+  agent, quelle compétence, depuis quelle zone vers quelle zone — leur position vient du
+  callout Riot (« A Main », « Mid Market »…), pas d'un relevé en jeu. Ils s'affichent donc
+  avec un « Fiche 0/4 » : ni position exacte, ni point de visée, ni type de lancer, ni média.
+  Le geste prévu est de les dupliquer, de déplacer les deux points au doigt, de remplir les
+  quatre étapes et d'ajouter ses propres captures, puis de cocher « testé en jeu ».
+  Un script de validation vérifie que chaque spot pointe vers un agent, une compétence et un
+  callout qui existent réellement côté Riot.
+- **Aucune photo ni vidéo de jeu n'est copiée dans l'app.** Les captures des guides existants
+  appartiennent à leurs auteurs. L'app fait donc trois choses à la place : elle génère le
+  **zoom du plan** sur chaque point (image Riot, pas celle d'un tiers), elle **lit les vidéos
+  de la communauté via le lecteur YouTube officiel** (vues et attribution préservées), et
+  elle range **tes** captures (galerie du téléphone) dans la bonne étape. Les vidéos
+  épinglées couvrent l'agent, parfois sur plusieurs cartes : à toi de repérer le lancer qui
+  correspond au spot. Leur titre est affiché sous le lecteur pour qu'il n'y ait pas de doute.
 - **Les skins possédés ne sont pas récupérables automatiquement.** Riot n'expose aucune API
   publique d'inventaire ; y accéder demanderait de se connecter avec les identifiants Riot,
   ce que l'app ne fait pas. La collection est donc cochée à la main, puis conservée localement.

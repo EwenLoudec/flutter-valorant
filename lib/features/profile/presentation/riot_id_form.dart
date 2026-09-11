@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/valorant_input.dart';
 import '../domain/player_query.dart';
 import '../domain/player_settings.dart';
 import '../providers/profile_providers.dart';
@@ -68,20 +69,20 @@ class _RiotIdFormState extends ConsumerState<RiotIdForm> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: [
-        _FieldLabel('Riot ID'),
+        ValorantFieldLabel('Riot ID'),
         TextField(
           controller: _riotIdController,
           textInputAction: TextInputAction.next,
           autocorrect: false,
-          decoration: _decoration(hint: 'Pseudo#TAG', errorText: _riotIdError),
+          decoration: valorantInputDecoration(hint: 'Pseudo#TAG', errorText: _riotIdError),
           onSubmitted: (_) => _submit(),
         ),
         const SizedBox(height: 16),
-        _FieldLabel('Région'),
+        ValorantFieldLabel('Région'),
         DropdownButtonFormField<String>(
           initialValue: _region.code,
           dropdownColor: AppTheme.valorantSurface,
-          decoration: _decoration(),
+          decoration: valorantInputDecoration(),
           items: [
             for (final region in ValorantRegion.all)
               DropdownMenuItem(
@@ -92,12 +93,12 @@ class _RiotIdFormState extends ConsumerState<RiotIdForm> {
           onChanged: (code) => setState(() => _region = ValorantRegion.fromCode(code)),
         ),
         const SizedBox(height: 16),
-        _FieldLabel('Clé API HenrikDev'),
+        ValorantFieldLabel('Clé API HenrikDev'),
         TextField(
           controller: _apiKeyController,
           obscureText: true,
           autocorrect: false,
-          decoration: _decoration(hint: 'HDEV-…', errorText: _apiKeyError),
+          decoration: valorantInputDecoration(hint: 'HDEV-…', errorText: _apiKeyError),
           onSubmitted: (_) => _submit(),
         ),
         const SizedBox(height: 6),
@@ -132,47 +133,6 @@ class _RiotIdFormState extends ConsumerState<RiotIdForm> {
           ),
         ],
       ],
-    );
-  }
-
-  InputDecoration _decoration({String? hint, String? errorText}) {
-    return InputDecoration(
-      hintText: hint,
-      errorText: errorText,
-      isDense: true,
-      filled: true,
-      fillColor: AppTheme.valorantDark,
-      hintStyle: const TextStyle(color: Colors.white24),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-      border: const OutlineInputBorder(
-        borderRadius: BorderRadius.zero,
-        borderSide: BorderSide(color: AppTheme.outlineDark),
-      ),
-      enabledBorder: const OutlineInputBorder(
-        borderRadius: BorderRadius.zero,
-        borderSide: BorderSide(color: AppTheme.outlineDark),
-      ),
-      focusedBorder: const OutlineInputBorder(
-        borderRadius: BorderRadius.zero,
-        borderSide: BorderSide(color: AppTheme.valorantRed),
-      ),
-    );
-  }
-}
-
-class _FieldLabel extends StatelessWidget {
-  const _FieldLabel(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Text(
-        text.toUpperCase(),
-        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.8, color: Colors.white70),
-      ),
     );
   }
 }

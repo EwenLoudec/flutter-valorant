@@ -52,5 +52,7 @@ foreach ($agent in $agents) {
 }
 
 $outputPath = Join-Path $PSScriptRoot "..\assets\data\ability_videos.json"
-$result | ConvertTo-Json -Depth 5 | Out-File -FilePath $outputPath -Encoding utf8
+# Sans BOM : Out-File -Encoding utf8 en ajoute un, et jsonDecode le refuse.
+$json = $result | ConvertTo-Json -Depth 5
+[System.IO.File]::WriteAllText($outputPath, $json, (New-Object System.Text.UTF8Encoding($false)))
 Write-Host "Done. Wrote $outputPath"

@@ -10,7 +10,9 @@ import 'package:flutter/services.dart' show rootBundle;
 class AbilityVideoRepository {
   Future<Map<String, Map<String, String>>> getVideosByAgent() async {
     final raw = await rootBundle.loadString('assets/data/ability_videos.json');
-    final decoded = jsonDecode(raw) as Map<String, dynamic>;
+    // Windows PowerShell writes a BOM in front of its UTF-8 output, and
+    // jsonDecode chokes on it — which silently emptied every ability video.
+    final decoded = jsonDecode(raw.replaceFirst('﻿', '')) as Map<String, dynamic>;
 
     return decoded.map(
       (agentUuid, abilities) => MapEntry(

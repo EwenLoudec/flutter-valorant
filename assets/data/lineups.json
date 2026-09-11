@@ -1,0 +1,1875 @@
+{
+  "version": 1,
+  "note": "Spots de départ livrés avec l'app. Chaque entrée est un BROUILLON : la position vient du callout Riot correspondant, pas d'un relevé en jeu. Ouvrez-la dans l'éditeur pour placer les points au pixel près, ajouter la capture de visée, puis la marquer comme vérifiée.",
+  "lineups": [
+    {
+      "id": "ascent-sova-recon-a-main",
+      "map": "Ascent",
+      "agent": "Sova",
+      "ability": "Ability2",
+      "abilityName": "Flèche de reconnaissance",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Recon A Main → Site",
+      "description": "Révèle le site A avant l'entrée depuis le Main. Ajuste la charge et les rebonds en jeu.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=MMni5F7Pfl0",
+      "demoTitle": "Sova Lineups Ascent 2026 — VALORANT Guide"
+    },
+    {
+      "id": "ascent-viper-molly-a-site",
+      "map": "Ascent",
+      "agent": "Viper",
+      "ability": "Grenade",
+      "abilityName": "Morsure du serpent",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Molly post-plant A",
+      "description": "Couvre le spike sur le site A sans exposer ton corps depuis le Main.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=usH5oWyVtoc",
+      "demoTitle": "Viper Lineups Ascent — Valorant Guide"
+    },
+    {
+      "id": "ascent-killjoy-turret-market",
+      "map": "Ascent",
+      "agent": "Killjoy",
+      "ability": "Ability2",
+      "abilityName": "Tourelle",
+      "side": "defense",
+      "from": {
+        "callout": "Market",
+        "region": "Mid"
+      },
+      "title": "Tourelle Market",
+      "description": "Surveille le mid et prévient des prises de contrôle adverses.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=NfuqxBeyBFM",
+      "demoTitle": "Killjoy Ascent Guide — Lineups & Setups Made Easy (2025)"
+    },
+    {
+      "id": "ascent-omen-smoke-rafters",
+      "map": "Ascent",
+      "agent": "Omen",
+      "ability": "Ability2",
+      "abilityName": "Voile sombre",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Rafters",
+        "region": "A"
+      },
+      "title": "Fumigène Rafters",
+      "description": "Coupe l'angle en hauteur sur A pendant que l'équipe entre par le Main.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=NxM2ypzT7AI",
+      "demoTitle": "Top 15 Omen One Way Smokes on Ascent"
+    },
+    {
+      "id": "ascent-sage-wall-a-main",
+      "map": "Ascent",
+      "agent": "Sage",
+      "ability": "Grenade",
+      "abilityName": "Orbe barrière",
+      "side": "defense",
+      "from": {
+        "callout": "Main",
+        "region": "A"
+      },
+      "title": "Mur A Main",
+      "description": "Bloque l'entrée du Main pour gagner le temps d'une rotation.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=svPKK9swRr4",
+      "demoTitle": "How to Sage Wall on Every Map"
+    },
+    {
+      "id": "ascent-jett-dash-mid-top",
+      "map": "Ascent",
+      "agent": "Jett",
+      "ability": "Ability2",
+      "abilityName": "Vent arrière",
+      "side": "attack",
+      "from": {
+        "callout": "Top",
+        "region": "Mid"
+      },
+      "title": "Dash prise de mid",
+      "description": "Point de départ pour prendre le contrôle du mid dès le début de round.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=EtM7ApLTxSs",
+      "demoTitle": "Aggressive Jett Smoke Guide — Every Map"
+    },
+    {
+      "id": "ascent-brimstone-molly-b-main",
+      "map": "Ascent",
+      "agent": "Brimstone",
+      "ability": "Ability1",
+      "abilityName": "Bombe incendiaire",
+      "side": "attack",
+      "from": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "title": "Molly retake B Main",
+      "description": "Retarde le retake adverse qui revient par le Main après la pose.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=YD0L3nbWrh4",
+      "demoTitle": "Brimstone Lineups Ascent — VALORANT"
+    },
+    {
+      "id": "ascent-cypher-trip-b-main",
+      "map": "Ascent",
+      "agent": "Cypher",
+      "ability": "Grenade",
+      "abilityName": "Fil de détente",
+      "side": "defense",
+      "from": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "title": "Fil B Main",
+      "description": "Détecte l'entrée B et te laisse le temps de décaler.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=fhzq07kh3rc",
+      "demoTitle": "Cypher Ascent Guide 2025 — Setups, One Ways, Trips & Cams"
+    },
+    {
+      "id": "ascent-astra-star-a-site",
+      "map": "Ascent",
+      "agent": "Astra",
+      "ability": "Ability2",
+      "abilityName": "Nébuleuse / Dissipation",
+      "side": "attack",
+      "from": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Étoile site A",
+      "description": "Étoile posée sur le site pour fumer l'entrée au moment de l'exécution.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=Vhvk5UaZwfU",
+      "demoTitle": "Essential Astra Tips and Tricks — Setups for Every Map"
+    },
+    {
+      "id": "split-raze-nade-a-screens",
+      "map": "Split",
+      "agent": "Raze",
+      "ability": "Ability2",
+      "abilityName": "Grenade gigogne",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Screens",
+        "region": "A"
+      },
+      "title": "Nade Screens",
+      "description": "Déloge le joueur posté derrière les écrans avant d'entrer sur A.",
+      "difficulty": "hard",
+      "demoUrl": "https://www.youtube.com/watch?v=Wk_rYEsyQmw",
+      "demoTitle": "Best Raze Nade Lineups in Split"
+    },
+    {
+      "id": "split-sova-shock-a-tower",
+      "map": "Split",
+      "agent": "Sova",
+      "ability": "Ability1",
+      "abilityName": "Électroflèche",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Tower",
+        "region": "A"
+      },
+      "title": "Électroflèche Tower",
+      "description": "Touche le défenseur en hauteur sur A sans montrer ta silhouette.",
+      "difficulty": "hard",
+      "demoUrl": "https://www.youtube.com/watch?v=acGUa--jsQc",
+      "demoTitle": "Best Sova Reveal Lineups for Split (2026)"
+    },
+    {
+      "id": "split-breach-fault-b-site",
+      "map": "Split",
+      "agent": "Breach",
+      "ability": "Ability2",
+      "abilityName": "Ligne de fracture",
+      "side": "attack",
+      "from": {
+        "callout": "Alley",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Fracture avant entrée B",
+      "description": "Traverse le mur depuis l'Alley pour désorienter les tenants du site.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=R_njZnidXn0",
+      "demoTitle": "3 Breach Lineups on Split by Team Liquid Redgar"
+    },
+    {
+      "id": "split-skye-flash-b-site",
+      "map": "Split",
+      "agent": "Skye",
+      "ability": "Ability2",
+      "abilityName": "Guide éclatant",
+      "side": "attack",
+      "from": {
+        "callout": "Lobby",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Flash entrée B",
+      "description": "Flash guidée par-dessus l'entrée de B, à déclencher au moment du swing.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=ea7jeLJMeFQ",
+      "demoTitle": "How to Win on Split — Skye Guide"
+    },
+    {
+      "id": "split-cypher-cam-a-rafters",
+      "map": "Split",
+      "agent": "Cypher",
+      "ability": "Ability2",
+      "abilityName": "Caméra espionne",
+      "side": "defense",
+      "from": {
+        "callout": "Rafters",
+        "region": "A"
+      },
+      "title": "Caméra Rafters",
+      "description": "Vue plongeante sur le site A, difficile à repérer depuis l'entrée.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=-FIbrRUCqJk",
+      "demoTitle": "Cypher Split Guide — Setups Made Easy"
+    },
+    {
+      "id": "split-viper-wall-mid",
+      "map": "Split",
+      "agent": "Viper",
+      "ability": "Ability2",
+      "abilityName": "Écran toxique",
+      "side": "attack",
+      "from": {
+        "callout": "Top",
+        "region": "Mid"
+      },
+      "to": {
+        "callout": "Bottom",
+        "region": "Mid"
+      },
+      "title": "Mur toxique mid",
+      "description": "Coupe le mid dans la longueur pour sécuriser la prise de contrôle.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=LW3r-NglV3A",
+      "demoTitle": "The Only Viper Split Guide You Need (2025) — Pro Lineups & Tactics"
+    },
+    {
+      "id": "split-omen-tp-b-tower",
+      "map": "Split",
+      "agent": "Omen",
+      "ability": "Grenade",
+      "abilityName": "Voie des ombres",
+      "side": "defense",
+      "from": {
+        "callout": "Tower",
+        "region": "B"
+      },
+      "title": "TP Tower",
+      "description": "Repli ou reprise d'angle en hauteur sur B après un premier duel.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=svbOy1gAWMY",
+      "demoTitle": "Top 15 Omen One Way Smokes on Split"
+    },
+    {
+      "id": "split-deadlock-sensor-a-ramps",
+      "map": "Split",
+      "agent": "Deadlock",
+      "ability": "Ability1",
+      "abilityName": "Radar ultrason",
+      "side": "defense",
+      "from": {
+        "callout": "Ramps",
+        "region": "A"
+      },
+      "title": "Capteur Ramps",
+      "description": "Couvre la montée des Ramps, un passage obligé vers le site A.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=q_XmbfmVbOU",
+      "demoTitle": "Deadlock Split Guide — Best Setups, Lineups & Ults"
+    },
+    {
+      "id": "lotus-viper-molly-c-site",
+      "map": "Lotus",
+      "agent": "Viper",
+      "ability": "Grenade",
+      "abilityName": "Morsure du serpent",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "C"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "C"
+      },
+      "title": "Molly post-plant C",
+      "description": "Tient le spike sur C depuis le Main, sans t'exposer au retake.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=htKVS0x-R68",
+      "demoTitle": "All Viper Post-Plant Lineups You Should Know on Lotus"
+    },
+    {
+      "id": "lotus-fade-haunt-a-site",
+      "map": "Lotus",
+      "agent": "Fade",
+      "ability": "Ability2",
+      "abilityName": "Hanteur",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Hanteur site A",
+      "description": "Révèle les positions sur A avant l'exécution depuis le Main.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=N_H7kS9_sr4",
+      "demoTitle": "All 15 Fade Lineups on Lotus"
+    },
+    {
+      "id": "lotus-killjoy-nano-b-site",
+      "map": "Lotus",
+      "agent": "Killjoy",
+      "ability": "Grenade",
+      "abilityName": "Essaim de nanites",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Nanites post-plant B",
+      "description": "Couvre la zone de pose sur B pendant le retake adverse.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=1Q3Nj6NLRVc",
+      "demoTitle": "Ultimate Killjoy Lineups — Every Map (2026)"
+    },
+    {
+      "id": "lotus-gekko-mosh-c-site",
+      "map": "Lotus",
+      "agent": "Gekko",
+      "ability": "Grenade",
+      "abilityName": "Pogo",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "C"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "C"
+      },
+      "title": "Pogo sur le spike C",
+      "description": "Déloge les défenseurs collés au spike après la pose sur C.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=PM0kYnRgu8U",
+      "demoTitle": "Top 15 Lotus Gekko Post-Plant Lineups"
+    },
+    {
+      "id": "lotus-harbor-wall-a-site",
+      "map": "Lotus",
+      "agent": "Harbor",
+      "ability": "Ability1",
+      "abilityName": "Marée haute",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Mur d'eau entrée A",
+      "description": "Guide le mur du Main jusque sur le site pour couvrir l'entrée.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=2XYEVGYRDvI",
+      "demoTitle": "Harbor Line-ups on All Maps — Tips and Tricks"
+    },
+    {
+      "id": "lotus-vyse-trap-b-main",
+      "map": "Lotus",
+      "agent": "Vyse",
+      "ability": "Ability1",
+      "abilityName": "Cisaille",
+      "side": "defense",
+      "from": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "title": "Piège B Main",
+      "description": "Ralentit l'entrée par le Main de B, à combiner avec un angle en retrait.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=dSuqFdGn1YE",
+      "demoTitle": "Best Vyse Lineups — All Maps (2025)"
+    },
+    {
+      "id": "lotus-astra-gravity-c-site",
+      "map": "Lotus",
+      "agent": "Astra",
+      "ability": "Grenade",
+      "abilityName": "Puits de gravité",
+      "side": "defense",
+      "from": {
+        "callout": "Site",
+        "region": "C"
+      },
+      "title": "Puits sur le spike C",
+      "description": "Prépare le retake en verrouillant la zone de pose de C.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=Vhvk5UaZwfU",
+      "demoTitle": "Essential Astra Tips and Tricks — Setups for Every Map"
+    },
+    {
+      "id": "lotus-clove-smoke-c-link",
+      "map": "Lotus",
+      "agent": "Clove",
+      "ability": "Ability2",
+      "abilityName": "Ruse",
+      "side": "attack",
+      "from": {
+        "callout": "Link",
+        "region": "C"
+      },
+      "title": "Fumigène Link C",
+      "description": "Coupe la rotation adverse par le Link pendant l'exécution sur C.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=IvmVxV-5nYI",
+      "demoTitle": "Best Clove Lineups — Every Map (2025)"
+    },
+    {
+      "id": "sunset-brimstone-molly-a-site",
+      "map": "Sunset",
+      "agent": "Brimstone",
+      "ability": "Ability1",
+      "abilityName": "Bombe incendiaire",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Molly d'entrée A",
+      "description": "Nettoie les angles proches du site avant de franchir le Main.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=Aj9czhyt7Tc",
+      "demoTitle": "Brimstone Molly Lineups for Sunset (2026)"
+    },
+    {
+      "id": "sunset-sova-recon-b-site",
+      "map": "Sunset",
+      "agent": "Sova",
+      "ability": "Ability2",
+      "abilityName": "Flèche de reconnaissance",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Recon B Main → Site",
+      "description": "Scanne le site B depuis le Main avant l'exécution.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=v-P__-Q3dyw",
+      "demoTitle": "Essential Sova Arrows for Every Map — Recon Dart Guide"
+    },
+    {
+      "id": "sunset-phoenix-flash-a-site",
+      "map": "Sunset",
+      "agent": "Phoenix",
+      "ability": "Ability2",
+      "abilityName": "Balle courbe",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Flash courbe entrée A",
+      "description": "Flash contournant le mur du Main pour aveugler les tenants du site.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=lWjFelKps4w",
+      "demoTitle": "Phoenix All Maps Lineups — Must Know Tips and Tricks"
+    },
+    {
+      "id": "sunset-cypher-trip-mid-tiles",
+      "map": "Sunset",
+      "agent": "Cypher",
+      "ability": "Grenade",
+      "abilityName": "Fil de détente",
+      "side": "defense",
+      "from": {
+        "callout": "Tiles",
+        "region": "Mid"
+      },
+      "title": "Fil mid Tiles",
+      "description": "Repère la prise de mid, souvent décisive sur cette carte.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=YjsZlMQDraM",
+      "demoTitle": "The Best Cypher Setups for Every Map"
+    },
+    {
+      "id": "sunset-neon-wall-mid",
+      "map": "Sunset",
+      "agent": "Neon",
+      "ability": "Ability1",
+      "abilityName": "Éclair relais",
+      "side": "attack",
+      "from": {
+        "callout": "Courtyard",
+        "region": "Mid"
+      },
+      "title": "Mur électrique mid",
+      "description": "Bloque les lignes de vue du Courtyard le temps de traverser.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=B0uELEt8EyI",
+      "demoTitle": "Neon All Maps Entry Guide"
+    },
+    {
+      "id": "sunset-tejo-salve-a-site",
+      "map": "Sunset",
+      "agent": "Tejo",
+      "ability": "Ability2",
+      "abilityName": "Salve autoguidée",
+      "side": "attack",
+      "from": {
+        "callout": "Lobby",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Salve sur site A",
+      "description": "Frappe le site depuis le Lobby, hors de portée des angles d'entrée.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=PX1kP6giHSs",
+      "demoTitle": "Tejo — Combos on All Current Maps"
+    },
+    {
+      "id": "sunset-iso-wall-b-site",
+      "map": "Sunset",
+      "agent": "Iso",
+      "ability": "Grenade",
+      "abilityName": "Contingence",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Mur d'entrée B",
+      "description": "Traverse le Main de B à couvert pour prendre le duel sur le site.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=0mDl1u-woC8",
+      "demoTitle": "Iso Every Map — Must Know Tips and Tricks"
+    },
+    {
+      "id": "sunset-killjoy-alarmbot-b-market",
+      "map": "Sunset",
+      "agent": "Killjoy",
+      "ability": "Ability1",
+      "abilityName": "Bot-alarme",
+      "side": "defense",
+      "from": {
+        "callout": "Market",
+        "region": "B"
+      },
+      "title": "Bot-alarme Market",
+      "description": "Couvre le passage par le Market pendant que tu tiens un autre angle.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=1Q3Nj6NLRVc",
+      "demoTitle": "Ultimate Killjoy Lineups — Every Map (2026)"
+    },
+    {
+      "id": "abyss-viper-wall-a-site",
+      "map": "Abyss",
+      "agent": "Viper",
+      "ability": "Ability2",
+      "abilityName": "Écran toxique",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Mur toxique sur A",
+      "description": "Coupe le site A en deux pour n'ouvrir qu'un seul duel à la fois.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=bFaF8EdN5yo",
+      "demoTitle": "Viper Post-Plant Snake Bite Lineups for All Maps"
+    },
+    {
+      "id": "abyss-sova-recon-b-site",
+      "map": "Abyss",
+      "agent": "Sova",
+      "ability": "Ability2",
+      "abilityName": "Flèche de reconnaissance",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Recon B Main → Site",
+      "description": "Dévoile le site B et le Nest avant de franchir le Main.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=v-P__-Q3dyw",
+      "demoTitle": "Essential Sova Arrows for Every Map — Recon Dart Guide"
+    },
+    {
+      "id": "abyss-chamber-rdv-a-tower",
+      "map": "Abyss",
+      "agent": "Chamber",
+      "ability": "Ability2",
+      "abilityName": "Rendez-vous",
+      "side": "defense",
+      "from": {
+        "callout": "Tower",
+        "region": "A"
+      },
+      "title": "Ancre Tower",
+      "description": "Point de repli en hauteur sur A après avoir pris un duel avancé.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=Q14Z_MvPIAY",
+      "demoTitle": "The Best Chamber Setups for All Maps"
+    },
+    {
+      "id": "abyss-yoru-fake-mid-catwalk",
+      "map": "Abyss",
+      "agent": "Yoru",
+      "ability": "Grenade",
+      "abilityName": "Feinte",
+      "side": "attack",
+      "from": {
+        "callout": "Catwalk",
+        "region": "Mid"
+      },
+      "title": "Feinte mid",
+      "description": "Simule une prise de mid pendant que l'équipe exécute ailleurs.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=TOq3eg5sIB8",
+      "demoTitle": "Yoru 2.0 Setups on Every Map — Fakeout & Gatecrash Spots"
+    },
+    {
+      "id": "abyss-breach-flash-b-site",
+      "map": "Abyss",
+      "agent": "Breach",
+      "ability": "Ability1",
+      "abilityName": "Point d'ignition",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Flash d'entrée B",
+      "description": "Aveugle les tenants du site à travers le mur du Main.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=MRO4iE9q1D0",
+      "demoTitle": "The Only Breach Spots You Need — Best Ability Spots on All Maps"
+    },
+    {
+      "id": "abyss-deadlock-barrier-b-main",
+      "map": "Abyss",
+      "agent": "Deadlock",
+      "ability": "Grenade",
+      "abilityName": "Disque barrière",
+      "side": "defense",
+      "from": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "title": "Barrière B Main",
+      "description": "Ferme le Main de B pour forcer la rotation adverse.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=PRWpPWBjwo0",
+      "demoTitle": "Best Deadlock Lineups — All Maps (2026)"
+    },
+    {
+      "id": "abyss-reyna-leer-a-link",
+      "map": "Abyss",
+      "agent": "Reyna",
+      "ability": "Grenade",
+      "abilityName": "Œillade",
+      "side": "attack",
+      "from": {
+        "callout": "Link",
+        "region": "A"
+      },
+      "title": "Œillade Link A",
+      "description": "Ouvre le passage du Link avant de prendre le duel.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=k_vGjs73WV4",
+      "demoTitle": "The Only Reyna Guide You Will Ever Need (2024)"
+    },
+    {
+      "id": "abyss-waylay-mid-top",
+      "map": "Abyss",
+      "agent": "Waylay",
+      "ability": "Ability2",
+      "abilityName": "Réfraction",
+      "side": "attack",
+      "from": {
+        "callout": "Top",
+        "region": "Mid"
+      },
+      "title": "Point d'appui mid",
+      "description": "Spot de départ pour l'agression mid, avec un repli immédiat.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=JqbHh3ymnjk",
+      "demoTitle": "The Ultimate Waylay Guide for VALORANT — Pro Tips"
+    },
+    {
+      "id": "haven-sova-recon-c-site",
+      "map": "Haven",
+      "agent": "Sova",
+      "ability": "Ability2",
+      "abilityName": "Flèche de reconnaissance",
+      "side": "attack",
+      "from": {
+        "callout": "Long",
+        "region": "C"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "C"
+      },
+      "title": "Recon C Long → Site",
+      "description": "Scanne le site C depuis le Long, l'angle le plus sûr pour tirer.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=v-P__-Q3dyw",
+      "demoTitle": "Essential Sova Arrows for Every Map — Recon Dart Guide"
+    },
+    {
+      "id": "haven-brimstone-smokes-a-site",
+      "map": "Haven",
+      "agent": "Brimstone",
+      "ability": "Ability2",
+      "abilityName": "Frappe fumigène",
+      "side": "attack",
+      "from": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Fumigènes exécution A",
+      "description": "Repère de pose des fumigènes pour fermer le site A à l'exécution.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=mlM4ub1nrnY",
+      "demoTitle": "Brimstone Post-Plant Molly Lineups for All Maps"
+    },
+    {
+      "id": "haven-kayo-frag-a-site",
+      "map": "Haven",
+      "agent": "KAY/O",
+      "ability": "Grenade",
+      "abilityName": "FRAG/ment",
+      "side": "attack",
+      "from": {
+        "callout": "Long",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "FRAG/ment post-plant A",
+      "description": "Dégage la zone du spike sur A depuis le Long après la pose.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=ebj1BtjAKsI",
+      "demoTitle": "Top 10 KAY/O Post-Plant Lineups for Haven"
+    },
+    {
+      "id": "haven-cypher-trip-c-garage",
+      "map": "Haven",
+      "agent": "Cypher",
+      "ability": "Grenade",
+      "abilityName": "Fil de détente",
+      "side": "defense",
+      "from": {
+        "callout": "Garage",
+        "region": "C"
+      },
+      "title": "Fil Garage",
+      "description": "Détecte l'entrée par le Garage, passage clé vers C.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=YjsZlMQDraM",
+      "demoTitle": "The Best Cypher Setups for Every Map"
+    },
+    {
+      "id": "haven-killjoy-turret-b-back",
+      "map": "Haven",
+      "agent": "Killjoy",
+      "ability": "Ability2",
+      "abilityName": "Tourelle",
+      "side": "defense",
+      "from": {
+        "callout": "Back",
+        "region": "B"
+      },
+      "title": "Tourelle fond de B",
+      "description": "Surveille le site B, souvent laissé seul sur cette carte à trois sites.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=1Q3Nj6NLRVc",
+      "demoTitle": "Ultimate Killjoy Lineups — Every Map (2026)"
+    },
+    {
+      "id": "haven-fade-prowler-c-site",
+      "map": "Haven",
+      "agent": "Fade",
+      "ability": "Ability1",
+      "abilityName": "Capture",
+      "side": "attack",
+      "from": {
+        "callout": "Long",
+        "region": "C"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "C"
+      },
+      "title": "Capture entrée C",
+      "description": "Accroche les défenseurs du site C juste avant l'entrée.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=5yqNa4HIq5Q",
+      "demoTitle": "Best Fade Lineups — All Maps (2026)"
+    },
+    {
+      "id": "haven-omen-smoke-a-tower",
+      "map": "Haven",
+      "agent": "Omen",
+      "ability": "Ability2",
+      "abilityName": "Voile sombre",
+      "side": "attack",
+      "from": {
+        "callout": "Long",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Tower",
+        "region": "A"
+      },
+      "title": "Fumigène Tower A",
+      "description": "Ferme l'angle en hauteur de A pendant la prise du Long.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=ydGrXcBttbo",
+      "demoTitle": "Omen Smoke Lineups for All Maps (2024)"
+    },
+    {
+      "id": "haven-sage-slow-c-long",
+      "map": "Haven",
+      "agent": "Sage",
+      "ability": "Ability1",
+      "abilityName": "Orbe de lenteur",
+      "side": "defense",
+      "from": {
+        "callout": "Site",
+        "region": "C"
+      },
+      "to": {
+        "callout": "Long",
+        "region": "C"
+      },
+      "title": "Lenteur C Long",
+      "description": "Ralentit la vague d'entrée par le Long depuis le fond du site.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=svPKK9swRr4",
+      "demoTitle": "How to Sage Wall on Every Map"
+    },
+    {
+      "id": "haven-miks-mid-courtyard",
+      "map": "Haven",
+      "agent": "Miks",
+      "ability": "Grenade",
+      "abilityName": "M-pulsion",
+      "side": "attack",
+      "from": {
+        "callout": "Doors",
+        "region": "Mid"
+      },
+      "to": {
+        "callout": "Courtyard",
+        "region": "Mid"
+      },
+      "title": "Ouverture mid Doors",
+      "description": "Prépare la prise du Courtyard depuis les Doors du mid.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=jt7qDoQ1Zd4",
+      "demoTitle": "The Ultimate Miks Guide for VALORANT"
+    },
+    {
+      "id": "summit-raze-satchel-a-main",
+      "map": "Summit",
+      "agent": "Raze",
+      "ability": "Ability1",
+      "abilityName": "Pack explosif",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "A"
+      },
+      "title": "Satchel d'entrée A",
+      "description": "Point de départ du saut satchel pour surgir sur le site A.",
+      "difficulty": "hard",
+      "demoUrl": "https://www.youtube.com/watch?v=XlPbPvhwROY",
+      "demoTitle": "Raze Grenade Spots & Lineups on All Maps"
+    },
+    {
+      "id": "summit-viper-molly-b-site",
+      "map": "Summit",
+      "agent": "Viper",
+      "ability": "Grenade",
+      "abilityName": "Morsure du serpent",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Molly post-plant B",
+      "description": "Tient le spike de B depuis le Main après la pose.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=bFaF8EdN5yo",
+      "demoTitle": "Viper Post-Plant Snake Bite Lineups for All Maps"
+    },
+    {
+      "id": "summit-gekko-dizzy-a-site",
+      "map": "Summit",
+      "agent": "Gekko",
+      "ability": "Ability1",
+      "abilityName": "Altego",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Altego entrée A",
+      "description": "Lâche la créature depuis le Main pour aveugler le site avant le swing.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=u24cy0vIdro",
+      "demoTitle": "Best Gekko Lineups for All Maps"
+    },
+    {
+      "id": "summit-skye-dog-b-main",
+      "map": "Summit",
+      "agent": "Skye",
+      "ability": "Ability1",
+      "abilityName": "Éclaireur",
+      "side": "attack",
+      "from": {
+        "callout": "Lobby",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "title": "Éclaireur B Main",
+      "description": "Envoie le loup dans le Main depuis le Lobby pour dégager l'info.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=881uAjwxtP8",
+      "demoTitle": "Skye Flash Spots on Every Map — Attack Guide"
+    },
+    {
+      "id": "summit-harbor-cove-a-site",
+      "map": "Summit",
+      "agent": "Harbor",
+      "ability": "Grenade",
+      "abilityName": "Tempête déferlante",
+      "side": "attack",
+      "from": {
+        "callout": "Lobby",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Vague sur site A",
+      "description": "Balaye le site A depuis le Lobby pour casser les positions tenues.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=2XYEVGYRDvI",
+      "demoTitle": "Harbor Line-ups on All Maps — Tips and Tricks"
+    },
+    {
+      "id": "summit-jett-smoke-mid-top",
+      "map": "Summit",
+      "agent": "Jett",
+      "ability": "Grenade",
+      "abilityName": "Averse",
+      "side": "attack",
+      "from": {
+        "callout": "Top",
+        "region": "Mid"
+      },
+      "title": "Fumigène mid",
+      "description": "Fume l'angle du mid haut pour passer sans être vu.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=EtM7ApLTxSs",
+      "demoTitle": "Aggressive Jett Smoke Guide — Every Map"
+    },
+    {
+      "id": "summit-phoenix-wall-mid",
+      "map": "Summit",
+      "agent": "Phoenix",
+      "ability": "Grenade",
+      "abilityName": "Brasier",
+      "side": "attack",
+      "from": {
+        "callout": "Bottom",
+        "region": "Mid"
+      },
+      "to": {
+        "callout": "Top",
+        "region": "Mid"
+      },
+      "title": "Mur de feu mid",
+      "description": "Coupe la ligne de vue du mid dans la montée.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=lWjFelKps4w",
+      "demoTitle": "Phoenix All Maps Lineups — Must Know Tips and Tricks"
+    },
+    {
+      "id": "summit-veto-b-link",
+      "map": "Summit",
+      "agent": "Veto",
+      "ability": "Ability2",
+      "abilityName": "Intercepteur",
+      "side": "defense",
+      "from": {
+        "callout": "Link",
+        "region": "B"
+      },
+      "title": "Contrôle du Link B",
+      "description": "Verrouille la rotation adverse par le Link de B.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=jk9VRmlqpmA",
+      "demoTitle": "Veto — All Abilities Explained | VALORANT New Agent"
+    },
+    {
+      "id": "summit-neon-fastlane-a-lobby",
+      "map": "Summit",
+      "agent": "Neon",
+      "ability": "Grenade",
+      "abilityName": "Voie rapide",
+      "side": "attack",
+      "from": {
+        "callout": "Lobby",
+        "region": "A"
+      },
+      "title": "Voie rapide A Lobby",
+      "description": "Ouvre le couloir du Lobby vers A pour une entrée en vitesse.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=B0uELEt8EyI",
+      "demoTitle": "Neon All Maps Entry Guide"
+    },
+    {
+      "id": "summit-iso-shield-b-site",
+      "map": "Summit",
+      "agent": "Iso",
+      "ability": "Ability1",
+      "abilityName": "Sape",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Entrée bouclier B",
+      "description": "Prends le premier duel du site B protégé, depuis le Main.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=0mDl1u-woC8",
+      "demoTitle": "Iso Every Map — Must Know Tips and Tricks"
+    },
+    {
+      "id": "bind-viper-molly-a-site",
+      "map": "Bind",
+      "agent": "Viper",
+      "ability": "Grenade",
+      "abilityName": "Morsure du serpent",
+      "side": "attack",
+      "from": {
+        "callout": "Short",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Molly post-plant A",
+      "description": "Couvre la zone de pose du site A depuis le Short.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=8XOBAgLLzj0",
+      "demoTitle": "Viper Post-Plant Snake Bite Lineups — Bind"
+    },
+    {
+      "id": "bind-brimstone-molly-b-site",
+      "map": "Bind",
+      "agent": "Brimstone",
+      "ability": "Ability1",
+      "abilityName": "Bombe incendiaire",
+      "side": "attack",
+      "from": {
+        "callout": "Long",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Molly d'entrée B",
+      "description": "Nettoie le fond du site B avant de sortir du Long.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=mlM4ub1nrnY",
+      "demoTitle": "Brimstone Post-Plant Molly Lineups for All Maps"
+    },
+    {
+      "id": "bind-raze-nade-a-short",
+      "map": "Bind",
+      "agent": "Raze",
+      "ability": "Ability2",
+      "abilityName": "Grenade gigogne",
+      "side": "attack",
+      "from": {
+        "callout": "Lobby",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Short",
+        "region": "A"
+      },
+      "title": "Nade sur le Short",
+      "description": "Déloge le joueur qui tient le Short depuis le Lobby.",
+      "difficulty": "hard",
+      "demoUrl": "https://www.youtube.com/watch?v=XlPbPvhwROY",
+      "demoTitle": "Raze Grenade Spots & Lineups on All Maps"
+    },
+    {
+      "id": "bind-cypher-trip-b-hall",
+      "map": "Bind",
+      "agent": "Cypher",
+      "ability": "Grenade",
+      "abilityName": "Fil de détente",
+      "side": "defense",
+      "from": {
+        "callout": "Hall",
+        "region": "B"
+      },
+      "title": "Fil B Hall",
+      "description": "Surveille le passage du Hall, souvent pris en rotation.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=YjsZlMQDraM",
+      "demoTitle": "The Best Cypher Setups for Every Map"
+    },
+    {
+      "id": "bind-skye-flash-a-short",
+      "map": "Bind",
+      "agent": "Skye",
+      "ability": "Ability2",
+      "abilityName": "Guide éclatant",
+      "side": "attack",
+      "from": {
+        "callout": "Lobby",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Short",
+        "region": "A"
+      },
+      "title": "Flash sur le Short",
+      "description": "Aveugle la tenue du Short pendant que l'équipe avance.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=881uAjwxtP8",
+      "demoTitle": "Skye Flash Spots on Every Map — Attack Guide"
+    },
+    {
+      "id": "bind-sova-recon-b-site",
+      "map": "Bind",
+      "agent": "Sova",
+      "ability": "Ability2",
+      "abilityName": "Flèche de reconnaissance",
+      "side": "attack",
+      "from": {
+        "callout": "Long",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Recon B Long → Site",
+      "description": "Révèle le site B avant l'exécution depuis le Long.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=v-P__-Q3dyw",
+      "demoTitle": "Essential Sova Arrows for Every Map — Recon Dart Guide"
+    },
+    {
+      "id": "breeze-viper-wall-a-site",
+      "map": "Breeze",
+      "agent": "Viper",
+      "ability": "Ability2",
+      "abilityName": "Écran toxique",
+      "side": "attack",
+      "from": {
+        "callout": "Lobby",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Mur toxique sur A",
+      "description": "Coupe le grand site A pour réduire les angles à tenir.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=bFaF8EdN5yo",
+      "demoTitle": "Viper Post-Plant Snake Bite Lineups for All Maps"
+    },
+    {
+      "id": "breeze-sova-recon-a-site",
+      "map": "Breeze",
+      "agent": "Sova",
+      "ability": "Ability2",
+      "abilityName": "Flèche de reconnaissance",
+      "side": "attack",
+      "from": {
+        "callout": "Ramp",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Recon A Ramp → Site",
+      "description": "Scanne le site A et les Pyramids depuis la Ramp.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=v-P__-Q3dyw",
+      "demoTitle": "Essential Sova Arrows for Every Map — Recon Dart Guide"
+    },
+    {
+      "id": "breeze-kayo-frag-b-site",
+      "map": "Breeze",
+      "agent": "KAY/O",
+      "ability": "Grenade",
+      "abilityName": "FRAG/ment",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "FRAG/ment post-plant B",
+      "description": "Tient la zone du spike sur B depuis le Main.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=TvRWcN4HetA",
+      "demoTitle": "KAY/O Entry and Post-Plant Lineups for All Sites on All Maps"
+    },
+    {
+      "id": "breeze-cypher-cam-mid-nest",
+      "map": "Breeze",
+      "agent": "Cypher",
+      "ability": "Ability2",
+      "abilityName": "Caméra espionne",
+      "side": "defense",
+      "from": {
+        "callout": "Nest",
+        "region": "Mid"
+      },
+      "title": "Caméra Nest",
+      "description": "Vue sur le mid, le passage le plus disputé de la carte.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=YjsZlMQDraM",
+      "demoTitle": "The Best Cypher Setups for Every Map"
+    },
+    {
+      "id": "breeze-harbor-wall-b-site",
+      "map": "Breeze",
+      "agent": "Harbor",
+      "ability": "Ability1",
+      "abilityName": "Marée haute",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Mur d'eau entrée B",
+      "description": "Couvre la longue entrée de B jusque sur le site.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=2XYEVGYRDvI",
+      "demoTitle": "Harbor Line-ups on All Maps — Tips and Tricks"
+    },
+    {
+      "id": "breeze-deadlock-net-a-shop",
+      "map": "Breeze",
+      "agent": "Deadlock",
+      "ability": "Ability2",
+      "abilityName": "GravNet",
+      "side": "defense",
+      "from": {
+        "callout": "Shop",
+        "region": "A"
+      },
+      "title": "GravNet devant le Shop",
+      "description": "Ralentit la vague d'entrée sur A au niveau du Shop.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=PRWpPWBjwo0",
+      "demoTitle": "Best Deadlock Lineups — All Maps (2026)"
+    },
+    {
+      "id": "fracture-breach-flash-a-site",
+      "map": "Fracture",
+      "agent": "Breach",
+      "ability": "Ability1",
+      "abilityName": "Point d'ignition",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Flash d'entrée A",
+      "description": "Aveugle le site A à travers le mur depuis le Main.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=MRO4iE9q1D0",
+      "demoTitle": "The Only Breach Spots You Need — Best Ability Spots on All Maps"
+    },
+    {
+      "id": "fracture-brimstone-molly-b-site",
+      "map": "Fracture",
+      "agent": "Brimstone",
+      "ability": "Ability1",
+      "abilityName": "Bombe incendiaire",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Molly post-plant B",
+      "description": "Retarde le retake sur B depuis le Main.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=mlM4ub1nrnY",
+      "demoTitle": "Brimstone Post-Plant Molly Lineups for All Maps"
+    },
+    {
+      "id": "fracture-neon-wall-a-drop",
+      "map": "Fracture",
+      "agent": "Neon",
+      "ability": "Ability1",
+      "abilityName": "Éclair relais",
+      "side": "attack",
+      "from": {
+        "callout": "Drop",
+        "region": "A"
+      },
+      "title": "Mur électrique au Drop",
+      "description": "Coupe les lignes de vue à la descente vers le site A.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=B0uELEt8EyI",
+      "demoTitle": "Neon All Maps Entry Guide"
+    },
+    {
+      "id": "fracture-killjoy-turret-b-arcade",
+      "map": "Fracture",
+      "agent": "Killjoy",
+      "ability": "Ability2",
+      "abilityName": "Tourelle",
+      "side": "defense",
+      "from": {
+        "callout": "Arcade",
+        "region": "B"
+      },
+      "title": "Tourelle Arcade",
+      "description": "Surveille l'Arcade, passage clé vers le site B.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=1Q3Nj6NLRVc",
+      "demoTitle": "Ultimate Killjoy Lineups — Every Map (2026)"
+    },
+    {
+      "id": "fracture-sova-recon-b-site",
+      "map": "Fracture",
+      "agent": "Sova",
+      "ability": "Ability2",
+      "abilityName": "Flèche de reconnaissance",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Recon B Main → Site",
+      "description": "Dévoile le site B avant l'exécution.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=v-P__-Q3dyw",
+      "demoTitle": "Essential Sova Arrows for Every Map — Recon Dart Guide"
+    },
+    {
+      "id": "fracture-yoru-tp-a-hall",
+      "map": "Fracture",
+      "agent": "Yoru",
+      "ability": "Ability2",
+      "abilityName": "Visite surprise",
+      "side": "attack",
+      "from": {
+        "callout": "Hall",
+        "region": "A"
+      },
+      "title": "TP dans le Hall A",
+      "description": "Point d'arrivée pour prendre le site A à revers.",
+      "difficulty": "hard",
+      "demoUrl": "https://www.youtube.com/watch?v=TOq3eg5sIB8",
+      "demoTitle": "Yoru 2.0 Setups on Every Map — Fakeout & Gatecrash Spots"
+    },
+    {
+      "id": "icebox-viper-wall-b-site",
+      "map": "Icebox",
+      "agent": "Viper",
+      "ability": "Ability2",
+      "abilityName": "Écran toxique",
+      "side": "attack",
+      "from": {
+        "callout": "Garage",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Mur toxique sur B",
+      "description": "Sépare le site B en deux depuis le Garage.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=bFaF8EdN5yo",
+      "demoTitle": "Viper Post-Plant Snake Bite Lineups for All Maps"
+    },
+    {
+      "id": "icebox-sova-recon-a-site",
+      "map": "Icebox",
+      "agent": "Sova",
+      "ability": "Ability2",
+      "abilityName": "Flèche de reconnaissance",
+      "side": "attack",
+      "from": {
+        "callout": "Belt",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Recon A Belt → Site",
+      "description": "Révèle le site A et les Rafters avant d'avancer.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=v-P__-Q3dyw",
+      "demoTitle": "Essential Sova Arrows for Every Map — Recon Dart Guide"
+    },
+    {
+      "id": "icebox-sage-wall-b-site",
+      "map": "Icebox",
+      "agent": "Sage",
+      "ability": "Grenade",
+      "abilityName": "Orbe barrière",
+      "side": "attack",
+      "from": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Mur de pose sur B",
+      "description": "Protège la pose du spike sur le site B.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=svPKK9swRr4",
+      "demoTitle": "How to Sage Wall on Every Map"
+    },
+    {
+      "id": "icebox-killjoy-turret-a-nest",
+      "map": "Icebox",
+      "agent": "Killjoy",
+      "ability": "Ability2",
+      "abilityName": "Tourelle",
+      "side": "defense",
+      "from": {
+        "callout": "Nest",
+        "region": "A"
+      },
+      "title": "Tourelle Nest",
+      "description": "Couvre l'entrée du site A en hauteur.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=1Q3Nj6NLRVc",
+      "demoTitle": "Ultimate Killjoy Lineups — Every Map (2026)"
+    },
+    {
+      "id": "icebox-jett-smoke-mid-blue",
+      "map": "Icebox",
+      "agent": "Jett",
+      "ability": "Grenade",
+      "abilityName": "Averse",
+      "side": "attack",
+      "from": {
+        "callout": "Blue",
+        "region": "Mid"
+      },
+      "title": "Fumigène mid Blue",
+      "description": "Ferme l'angle du mid le temps de passer.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=EtM7ApLTxSs",
+      "demoTitle": "Aggressive Jett Smoke Guide — Every Map"
+    },
+    {
+      "id": "icebox-tejo-salve-a-site",
+      "map": "Icebox",
+      "agent": "Tejo",
+      "ability": "Ability2",
+      "abilityName": "Salve autoguidée",
+      "side": "attack",
+      "from": {
+        "callout": "Pipes",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Salve sur site A",
+      "description": "Frappe le site A depuis les Pipes, à l'abri des angles.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=PX1kP6giHSs",
+      "demoTitle": "Tejo — Combos on All Current Maps"
+    },
+    {
+      "id": "pearl-astra-star-b-site",
+      "map": "Pearl",
+      "agent": "Astra",
+      "ability": "Ability2",
+      "abilityName": "Nébuleuse / Dissipation",
+      "side": "attack",
+      "from": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Étoile site B",
+      "description": "Étoile prête à fumer l'entrée de B à l'exécution.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=Vhvk5UaZwfU",
+      "demoTitle": "Essential Astra Tips and Tricks — Setups for Every Map"
+    },
+    {
+      "id": "pearl-viper-wall-a-site",
+      "map": "Pearl",
+      "agent": "Viper",
+      "ability": "Ability2",
+      "abilityName": "Écran toxique",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Mur toxique sur A",
+      "description": "Coupe le site A dans la longueur depuis le Main.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=bFaF8EdN5yo",
+      "demoTitle": "Viper Post-Plant Snake Bite Lineups for All Maps"
+    },
+    {
+      "id": "pearl-fade-haunt-b-site",
+      "map": "Pearl",
+      "agent": "Fade",
+      "ability": "Ability2",
+      "abilityName": "Hanteur",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Hanteur site B",
+      "description": "Révèle les tenants du site B avant l'entrée.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=5yqNa4HIq5Q",
+      "demoTitle": "Best Fade Lineups — All Maps (2026)"
+    },
+    {
+      "id": "pearl-cypher-trip-mid-doors",
+      "map": "Pearl",
+      "agent": "Cypher",
+      "ability": "Grenade",
+      "abilityName": "Fil de détente",
+      "side": "defense",
+      "from": {
+        "callout": "Doors",
+        "region": "Mid"
+      },
+      "title": "Fil mid Doors",
+      "description": "Détecte la prise de mid dès les Doors.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=YjsZlMQDraM",
+      "demoTitle": "The Best Cypher Setups for Every Map"
+    },
+    {
+      "id": "pearl-harbor-cove-a-site",
+      "map": "Pearl",
+      "agent": "Harbor",
+      "ability": "Grenade",
+      "abilityName": "Tempête déferlante",
+      "side": "attack",
+      "from": {
+        "callout": "Link",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Vague sur site A",
+      "description": "Balaye le site A depuis le Link pour casser les positions.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=2XYEVGYRDvI",
+      "demoTitle": "Harbor Line-ups on All Maps — Tips and Tricks"
+    },
+    {
+      "id": "pearl-vyse-trap-b-main",
+      "map": "Pearl",
+      "agent": "Vyse",
+      "ability": "Ability2",
+      "abilityName": "Rose métallique",
+      "side": "defense",
+      "from": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "title": "Piège B Main",
+      "description": "Casse l'entrée par le Main de B au moment du rush.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=dSuqFdGn1YE",
+      "demoTitle": "Best Vyse Lineups — All Maps (2025)"
+    },
+    {
+      "id": "corrode-sova-recon-a-site",
+      "map": "Corrode",
+      "agent": "Sova",
+      "ability": "Ability2",
+      "abilityName": "Flèche de reconnaissance",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "A"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "A"
+      },
+      "title": "Recon A Main → Site",
+      "description": "Scanne le site A avant de franchir le Main.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=v-P__-Q3dyw",
+      "demoTitle": "Essential Sova Arrows for Every Map — Recon Dart Guide"
+    },
+    {
+      "id": "corrode-viper-molly-b-site",
+      "map": "Corrode",
+      "agent": "Viper",
+      "ability": "Grenade",
+      "abilityName": "Morsure du serpent",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Molly post-plant B",
+      "description": "Tient le spike de B depuis le Main après la pose.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=bFaF8EdN5yo",
+      "demoTitle": "Viper Post-Plant Snake Bite Lineups for All Maps"
+    },
+    {
+      "id": "corrode-clove-smoke-mid-top",
+      "map": "Corrode",
+      "agent": "Clove",
+      "ability": "Ability2",
+      "abilityName": "Ruse",
+      "side": "attack",
+      "from": {
+        "callout": "Top",
+        "region": "Mid"
+      },
+      "title": "Fumigène mid haut",
+      "description": "Ferme la vue du mid haut pendant la prise de contrôle.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=IvmVxV-5nYI",
+      "demoTitle": "Best Clove Lineups — Every Map (2025)"
+    },
+    {
+      "id": "corrode-killjoy-alarm-b-link",
+      "map": "Corrode",
+      "agent": "Killjoy",
+      "ability": "Ability1",
+      "abilityName": "Bot-alarme",
+      "side": "defense",
+      "from": {
+        "callout": "Link",
+        "region": "B"
+      },
+      "title": "Bot-alarme B Link",
+      "description": "Prévient des rotations adverses par le Link de B.",
+      "difficulty": "easy",
+      "demoUrl": "https://www.youtube.com/watch?v=1Q3Nj6NLRVc",
+      "demoTitle": "Ultimate Killjoy Lineups — Every Map (2026)"
+    },
+    {
+      "id": "corrode-waylay-mid-window",
+      "map": "Corrode",
+      "agent": "Waylay",
+      "ability": "Grenade",
+      "abilityName": "Saturation",
+      "side": "attack",
+      "from": {
+        "callout": "Window",
+        "region": "Mid"
+      },
+      "title": "Ouverture mid Window",
+      "description": "Prépare l'agression du mid par la Window.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=JqbHh3ymnjk",
+      "demoTitle": "The Ultimate Waylay Guide for VALORANT — Pro Tips"
+    },
+    {
+      "id": "corrode-veto-a-lobby",
+      "map": "Corrode",
+      "agent": "Veto",
+      "ability": "Grenade",
+      "abilityName": "Vortex",
+      "side": "defense",
+      "from": {
+        "callout": "Lobby",
+        "region": "A"
+      },
+      "title": "Contrôle du Lobby A",
+      "description": "Verrouille l'arrivée par le Lobby du site A.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=jk9VRmlqpmA",
+      "demoTitle": "Veto — All Abilities Explained | VALORANT New Agent"
+    },
+    {
+      "id": "corrode-miks-b-site",
+      "map": "Corrode",
+      "agent": "Miks",
+      "ability": "Ability2",
+      "abilityName": "Forme d'onde",
+      "side": "attack",
+      "from": {
+        "callout": "Main",
+        "region": "B"
+      },
+      "to": {
+        "callout": "Site",
+        "region": "B"
+      },
+      "title": "Ouverture entrée B",
+      "description": "Prépare l'entrée sur le site B depuis le Main.",
+      "difficulty": "medium",
+      "demoUrl": "https://www.youtube.com/watch?v=jt7qDoQ1Zd4",
+      "demoTitle": "The Ultimate Miks Guide for VALORANT"
+    }
+  ]
+}

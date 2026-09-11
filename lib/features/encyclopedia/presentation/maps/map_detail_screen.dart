@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/fade_in_network_image.dart';
+import '../../../../core/widgets/pressable_scale.dart';
+import '../../../lineups/presentation/map_lineups_screen.dart';
+import '../../../lineups/providers/lineups_providers.dart';
 import '../../data/map_meta_data.dart';
 import '../../domain/agent.dart';
 import '../../domain/game_map.dart';
@@ -111,6 +114,8 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
                   key: _minimapKey,
                   child: TacticalMinimap(map: map, highlighted: _highlighted, highlightToken: _highlightToken),
                 ),
+                const SizedBox(height: 10),
+                _LineupsShortcut(mapName: map.displayName),
                 if (grouped.isNotEmpty) ...[
                   const SizedBox(height: 24),
                   Row(
@@ -215,6 +220,46 @@ class _CalloutChip extends StatelessWidget {
             fontWeight: FontWeight.w600,
             color: selected ? color : Colors.white,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Bridges the encyclopedia to the lineups of the same map.
+class _LineupsShortcut extends ConsumerWidget {
+  const _LineupsShortcut({required this.mapName});
+
+  final String mapName;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final count = ref.watch(lineupCountByMapProvider)[mapName] ?? 0;
+
+    return PressableScale(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => MapLineupsScreen(mapName: mapName)),
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        decoration: BoxDecoration(
+          color: AppTheme.valorantRed.withValues(alpha: 0.10),
+          border: Border.all(color: AppTheme.valorantRed.withValues(alpha: 0.6)),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.my_location, size: 18, color: AppTheme.valorantRed),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                count == 0
+                    ? 'Aucun lineup sur cette carte — ajoute le premier'
+                    : '$count lineup${count > 1 ? 's' : ''} sur cette carte',
+                style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800),
+              ),
+            ),
+            const Icon(Icons.chevron_right, size: 18, color: AppTheme.valorantRed),
+          ],
         ),
       ),
     );
