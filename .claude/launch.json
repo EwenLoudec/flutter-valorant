@@ -3,9 +3,9 @@
   "configurations": [
     {
       "name": "mybmw-web",
-      "runtimeExecutable": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
-      "runtimeArgs": ["C:\\Users\\UTILIS~1\\AppData\\Local\\Temp\\claude\\C--Users-Utilisateur-mybmw\\fc0f0a88-957d-4e10-b5a1-cee53439a9f9\\scratchpad\\static_server.dart"],
-      "port": 8765
+      "runtimeExecutable": "C:\\src\\flutter\\bin\\flutter.bat",
+      "runtimeArgs": ["run", "-d", "web-server", "--web-port", "8766", "--web-hostname", "127.0.0.1"],
+      "port": 8766
     }
   ]
 }
