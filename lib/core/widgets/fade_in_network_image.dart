@@ -3,11 +3,21 @@ import 'package:flutter/material.dart';
 /// Image.network that fades in once a frame is decoded, instead of popping
 /// in abruptly, and falls back to a quiet placeholder on failure.
 class FadeInNetworkImage extends StatelessWidget {
-  const FadeInNetworkImage({super.key, required this.url, this.fit = BoxFit.cover, this.alignment = Alignment.center});
+  const FadeInNetworkImage({
+    super.key,
+    required this.url,
+    this.fit = BoxFit.cover,
+    this.alignment = Alignment.center,
+    this.silhouetteColor,
+  });
 
   final String url;
   final BoxFit fit;
   final Alignment alignment;
+
+  /// When set, every visible pixel is painted in this color: only the
+  /// outline of the picture remains.
+  final Color? silhouetteColor;
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +25,8 @@ class FadeInNetworkImage extends StatelessWidget {
       url,
       fit: fit,
       alignment: alignment,
+      color: silhouetteColor,
+      colorBlendMode: silhouetteColor == null ? null : BlendMode.srcIn,
       frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
         if (wasSynchronouslyLoaded) return child;
         return AnimatedOpacity(

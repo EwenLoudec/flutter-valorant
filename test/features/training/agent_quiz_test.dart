@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mybmw/features/encyclopedia/domain/agent.dart';
-import 'package:mybmw/features/training/domain/agent_quiz.dart';
+import 'package:valorant_companion/features/encyclopedia/domain/agent.dart';
+import 'package:valorant_companion/features/training/domain/agent_quiz.dart';
 
 Agent _agent(String name, {bool withIcons = true}) {
   return Agent(

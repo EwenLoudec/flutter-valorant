@@ -4,9 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/async_list_view.dart';
 import '../../../../core/widgets/diagonal_cut_clipper.dart';
+import '../../../../core/widgets/entry_tile.dart';
 import '../../../../core/widgets/fade_in_network_image.dart';
 import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/staggered_fade_slide.dart';
+import '../../../training/presentation/catalog_quiz_pages.dart';
 import '../../domain/rank_tier.dart';
 import '../../providers/encyclopedia_providers.dart';
 import 'radiant_leaderboard_screen.dart';
@@ -31,15 +33,41 @@ class RanksTab extends ConsumerWidget {
                     children: [
                       const Icon(Icons.event, size: 14, color: Colors.white38),
                       const SizedBox(width: 6),
-                      Text(
-                        'SAISON ACTUELLE : ${season.label.toUpperCase()}',
-                        style: const TextStyle(fontSize: 11, color: Colors.white54, fontWeight: FontWeight.w700),
+                      Flexible(
+                        child: Text(
+                          'SAISON ACTUELLE : ${season.label.toUpperCase()}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 11, color: Colors.white54, fontWeight: FontWeight.w700),
+                        ),
                       ),
                     ],
                   ),
                 ),
           loading: () => const SizedBox(),
           error: (error, _) => const SizedBox(),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
+          child: EntryTileRow(
+            tiles: [
+              EntryTile(
+                icon: Icons.leaderboard_outlined,
+                title: 'CLASSEMENT',
+                subtitle: 'Le top de ta région',
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const RadiantLeaderboardScreen()),
+                ),
+              ),
+              EntryTile(
+                icon: Icons.sports_esports_outlined,
+                title: 'QUIZ RANGS',
+                subtitle: 'Reconnais les emblèmes',
+                isHighlighted: true,
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RankQuizPage())),
+              ),
+            ],
+          ),
         ),
         Expanded(
           child: AsyncListView<RankTier>(

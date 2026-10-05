@@ -14,11 +14,40 @@ const _goodColor = Color(0xFF2FBF8F);
 
 /// Ten mixed questions on the agents: portraits, ability icons, official
 /// descriptions and ability sounds.
+///
+/// The other catalogue quizzes (weapons, ranks, daily challenge) run on the
+/// same screen with their own [roundBuilder].
 class AgentQuizScreen extends ConsumerStatefulWidget {
-  const AgentQuizScreen({super.key, required this.agents, required this.soundsByAgent});
+  const AgentQuizScreen({
+    super.key,
+    this.agents = const [],
+    this.soundsByAgent = const {},
+    this.title = 'ENTRAÎNEMENT AGENTS',
+    this.kind = QuizKind.agent,
+    this.label = 'Agents',
+    this.mode = 'mixed',
+    this.roundBuilder,
+    this.canReplay = true,
+    this.onFinished,
+  });
 
   final List<Agent> agents;
   final Map<String, Map<String, String>> soundsByAgent;
+  final String title;
+
+  /// How the run is filed in the history.
+  final QuizKind kind;
+  final String label;
+  final String mode;
+
+  /// Builds a run; defaults to the mixed agent questions.
+  final AgentQuizRound Function()? roundBuilder;
+
+  /// The daily challenge is played once: no replay button.
+  final bool canReplay;
+
+  /// Called with the score once the run is filed.
+  final Future<void> Function(int score)? onFinished;
 
   @override
   ConsumerState<AgentQuizScreen> createState() => _AgentQuizScreenState();
@@ -35,6 +64,8 @@ class _AgentQuizScreenState extends ConsumerState<AgentQuizScreen> {
   final _correct = <bool>[];
 
   AgentQuizRound _newRound() {
+    final builder = widget.roundBuilder;
+    if (builder != null) return builder();
     return AgentQuizRound.create(agents: widget.agents, soundsByAgent: widget.soundsByAgent);
   }
 
@@ -72,14 +103,15 @@ class _AgentQuizScreenState extends ConsumerState<AgentQuizScreen> {
 
     final isRecord = await ref.read(quizProgressProvider.notifier).record(
       QuizRun(
-        kind: QuizKind.agent,
-        label: 'Agents',
-        mode: 'mixed',
+        kind: widget.kind,
+        label: widget.label,
+        mode: widget.mode,
         score: _score,
         maxScore: _round.maxScore,
         playedAt: DateTime.now(),
       ),
     );
+    await widget.onFinished?.call(_score);
     if (!mounted) return;
 
     setState(() {
@@ -92,8 +124,17 @@ class _AgentQuizScreenState extends ConsumerState<AgentQuizScreen> {
   Widget build(BuildContext context) {
     if (_round.questions.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: const Text('ENTRAÎNEMENT AGENTS')),
-        body: const Center(child: CircularProgressIndicator()),
+        appBar: AppBar(title: Text(widget.title)),
+        body: const Center(
+          child: Padding(
+            padding: EdgeInsets.all(24),
+            child: Text(
+              'Pas assez de données pour lancer une partie. Vérifie la connexion et réessaie.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white70),
+            ),
+          ),
+        ),
       );
     }
 
@@ -124,7 +165,8 @@ class _AgentQuizScreenState extends ConsumerState<AgentQuizScreen> {
                   maxScore: _round.maxScore,
                   correct: _correct,
                   isRecord: _isRecord,
-                  onReplay: _restart,
+                  kind: widget.kind,
+                  onReplay: widget.canReplay ? _restart : null,
                   onLeave: () => Navigator.of(context).pop(),
                 ),
               ]
@@ -196,7 +238,11 @@ class _QuestionCard extends StatelessWidget {
               height: question.kind == AgentQuestionKind.portrait ? 260 : 150,
               color: AppTheme.valorantSurface,
               padding: EdgeInsets.all(question.kind == AgentQuestionKind.portrait ? 0 : 18),
-              child: FadeInNetworkImage(url: imageUrl, fit: BoxFit.contain),
+              child: question.kind == AgentQuestionKind.weaponSilhouette
+                  // Only the outline: the colours of the default skin would
+                  // make it too easy.
+                  ? FadeInNetworkImage(url: imageUrl, fit: BoxFit.contain, silhouetteColor: Colors.white)
+                  : FadeInNetworkImage(url: imageUrl, fit: BoxFit.contain),
             ),
           ),
         if (soundUrl != null) AbilitySoundPlayer(key: ValueKey(soundUrl), url: soundUrl),
@@ -298,6 +344,7 @@ class _Result extends StatelessWidget {
     required this.maxScore,
     required this.correct,
     required this.isRecord,
+    required this.kind,
     required this.onReplay,
     required this.onLeave,
   });
@@ -306,15 +353,33 @@ class _Result extends StatelessWidget {
   final int maxScore;
   final List<bool> correct;
   final bool isRecord;
-  final VoidCallback onReplay;
+  final QuizKind kind;
+  final VoidCallback? onReplay;
   final VoidCallback onLeave;
 
   String get _comment {
     final ratio = maxScore == 0 ? 0.0 : score / maxScore;
-    if (ratio >= 0.9) return 'Tu connais le roster sur le bout des doigts.';
-    if (ratio >= 0.7) return 'Bonne base — reste les compétences qui se ressemblent.';
-    if (ratio >= 0.4) return 'Les agents oui, les compétences moins.';
-    return 'À retravailler : passe un tour dans les fiches agents.';
+    switch (kind) {
+      case QuizKind.weapon:
+        if (ratio >= 0.9) return 'L\'armurerie n\'a plus de secret pour toi.';
+        if (ratio >= 0.6) return 'Bonne base — les skins brouillent encore les pistes.';
+        return 'À retravailler : fais un tour dans l\'onglet Armes.';
+      case QuizKind.rank:
+        if (ratio >= 0.9) return 'Tu reconnais chaque palier au premier coup d\'œil.';
+        if (ratio >= 0.6) return 'Les rangs oui, les divisions moins.';
+        return 'À retravailler : compare les emblèmes dans l\'onglet Rangs.';
+      case QuizKind.daily:
+        if (ratio >= 0.9) return 'Défi du jour bouclé haut la main. Reviens demain !';
+        if (ratio >= 0.6) return 'Joli défi. Reviens demain pour prolonger ta série.';
+        return 'Défi terminé — reviens demain pour un nouveau tirage.';
+      case QuizKind.agent:
+      case QuizKind.map:
+      case QuizKind.lineup:
+        if (ratio >= 0.9) return 'Tu connais le roster sur le bout des doigts.';
+        if (ratio >= 0.7) return 'Bonne base — reste les compétences qui se ressemblent.';
+        if (ratio >= 0.4) return 'Les agents oui, les compétences moins.';
+        return 'À retravailler : passe un tour dans les fiches agents.';
+    }
   }
 
   @override
@@ -387,8 +452,9 @@ class _Result extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 18),
-        FilledButton(
-          onPressed: onReplay,
+        if (onReplay != null) ...[
+          FilledButton(
+            onPressed: onReplay,
           style: FilledButton.styleFrom(
             backgroundColor: AppTheme.valorantRed,
             foregroundColor: Colors.white,
@@ -396,8 +462,9 @@ class _Result extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 14),
           ),
           child: const Text('REJOUER', style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: 0.5)),
-        ),
-        const SizedBox(height: 8),
+          ),
+          const SizedBox(height: 8),
+        ],
         OutlinedButton(
           onPressed: onLeave,
           style: OutlinedButton.styleFrom(

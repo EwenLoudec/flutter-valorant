@@ -24,6 +24,14 @@ class DamageRange {
   final double legDamage;
 }
 
+/// A skin reduced to what a quiz question shows: its name and picture.
+class WeaponSkinPreview {
+  const WeaponSkinPreview({required this.displayName, required this.displayIcon});
+
+  final String displayName;
+  final String displayIcon;
+}
+
 class Weapon {
   const Weapon({
     required this.uuid,
@@ -34,6 +42,7 @@ class Weapon {
     required this.fireRate,
     required this.magazineSize,
     required this.damageRanges,
+    this.skinPreviews = const [],
   });
 
   factory Weapon.fromJson(Map<String, dynamic> json) {
@@ -52,6 +61,14 @@ class Weapon {
       damageRanges: (stats?['damageRanges'] as List<dynamic>? ?? [])
           .map((d) => DamageRange.fromJson(d as Map<String, dynamic>))
           .toList(),
+      skinPreviews: [
+        for (final skin in json['skins'] as List<dynamic>? ?? const [])
+          if (skin is Map<String, dynamic> &&
+              skin['contentTierUuid'] != null &&
+              skin['displayIcon'] is String &&
+              skin['displayName'] is String)
+            WeaponSkinPreview(displayName: skin['displayName'] as String, displayIcon: skin['displayIcon'] as String),
+      ],
     );
   }
 
@@ -63,4 +80,7 @@ class Weapon {
   final double? fireRate;
   final int? magazineSize;
   final List<DamageRange> damageRanges;
+
+  /// The paid skins, the default one left out.
+  final List<WeaponSkinPreview> skinPreviews;
 }

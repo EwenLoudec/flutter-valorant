@@ -1,6 +1,6 @@
 {
-    "name": "mybmw",
-    "short_name": "mybmw",
+    "name": "Valorant Companion",
+    "short_name": "Valorant",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,15 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/henrik_api_client.dart';
+import '../../encyclopedia/domain/cosmetic.dart';
+import '../data/cosmetic_collection_store.dart';
 import '../data/henrik_player_repository.dart';
 import '../data/player_repository.dart';
 import '../data/player_settings_store.dart';
+import '../domain/leaderboard.dart';
 import '../domain/owned_skin.dart';
 import '../domain/player_account.dart';
 import '../domain/player_match.dart';
 import '../domain/player_query.dart';
 import '../domain/player_rank.dart';
 import '../domain/player_settings.dart';
+import '../domain/player_stats_summary.dart';
+import '../domain/rank_history.dart';
 import '../domain/weapon_accuracy.dart';
 
 /// How many recent matches the profile pulls in one go. The API returns the
@@ -86,6 +91,31 @@ final weaponAccuracyProvider = FutureProvider.family<List<WeaponAccuracy>, Playe
   return WeaponAccuracy.aggregate(matches);
 }, retry: _retryTransientFailures);
 
+/// RR movement of the recent competitive games, most recent first.
+final playerRankHistoryProvider = FutureProvider.family<List<RankHistoryEntry>, PlayerQuery>((ref, query) {
+  return ref.watch(playerRepositoryProvider).getRankHistory(query);
+}, retry: _retryTransientFailures);
+
+/// Per agent, per map, per side and per session figures, all computed from
+/// the loaded matches. The RR history only adds the session's RR balance, so
+/// its failure never hides the rest.
+final playerStatsSummaryProvider = FutureProvider.family<PlayerStatsSummary, PlayerQuery>((ref, query) async {
+  final matches = await ref.watch(playerMatchesProvider(query).future);
+
+  var rankHistory = const <RankHistoryEntry>[];
+  try {
+    rankHistory = await ref.watch(playerRankHistoryProvider(query).future);
+  } on Object {
+    // Keep the summary without the RR balance.
+  }
+  return PlayerStatsSummary.from(matches, rankHistory: rankHistory);
+}, retry: _retryTransientFailures);
+
+/// The top of one region's ranked ladder, keyed by region code.
+final leaderboardProvider = FutureProvider.family<Leaderboard, String>((ref, regionCode) {
+  return ref.watch(playerRepositoryProvider).getLeaderboard(ValorantRegion.fromCode(regionCode));
+}, retry: _retryTransientFailures);
+
 /// Riot exposes no public endpoint for an account's owned skins, so the
 /// collection is curated by the user and kept on the device.
 class OwnedSkinsNotifier extends AsyncNotifier<List<OwnedSkin>> {
@@ -115,3 +145,26 @@ final ownedSkinUuidsProvider = Provider<Set<String>>((ref) {
   final owned = ref.watch(ownedSkinsProvider).value ?? const <OwnedSkin>[];
   return {for (final skin in owned) skin.uuid};
 });
+
+final cosmeticCollectionStoreProvider = Provider<CosmeticCollectionStore>((ref) => CosmeticCollectionStore());
+
+/// The cosmetics ticked as owned, per kind.
+class OwnedCosmeticsNotifier extends AsyncNotifier<Map<CosmeticKind, Set<String>>> {
+  @override
+  Future<Map<CosmeticKind, Set<String>>> build() {
+    return ref.read(cosmeticCollectionStoreProvider).load();
+  }
+
+  Future<void> toggle(Cosmetic cosmetic) async {
+    final current = state.value ?? const <CosmeticKind, Set<String>>{};
+    final owned = {...?current[cosmetic.kind]};
+    if (!owned.remove(cosmetic.uuid)) owned.add(cosmetic.uuid);
+
+    state = AsyncData({...current, cosmetic.kind: owned});
+    await ref.read(cosmeticCollectionStoreProvider).save(cosmetic.kind, owned);
+  }
+}
+
+final ownedCosmeticsProvider = AsyncNotifierProvider<OwnedCosmeticsNotifier, Map<CosmeticKind, Set<String>>>(
+  OwnedCosmeticsNotifier.new,
+);

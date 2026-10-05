@@ -9,7 +9,10 @@ enum AgentQuestionKind {
   abilityOwner('À quel agent appartient cette compétence ?'),
   abilityDescription('De quelle compétence parle cette description ?'),
   soundOwner('À quel agent appartient cette capacité ?'),
-  abilitySound('Et quelle est cette capacité ?');
+  abilitySound('Et quelle est cette capacité ?'),
+  weaponSilhouette('Quelle est cette arme ?'),
+  weaponSkin('À quelle arme appartient ce skin ?'),
+  rankIcon('Quel est ce rang ?');
 
   const AgentQuestionKind(this.prompt);
 
@@ -238,6 +241,11 @@ class AgentQuizRound {
           if (ability.slot != 'Passive') ability.displayName,
     ];
   }
+
+  /// Four distinct options, the right one among them — shared with the other
+  /// catalogue quizzes.
+  static List<String> choicesFor(String answer, List<String> pool, Random shuffler) =>
+      _choices(answer, pool, shuffler);
 
   /// Four distinct options, the right one among them.
   static List<String> _choices(String answer, List<String> pool, Random shuffler) {

@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mybmw/features/encyclopedia/domain/game_map.dart';
-import 'package:mybmw/features/lineups/data/lineup_sources.dart';
-import 'package:mybmw/features/lineups/domain/lineup.dart';
-import 'package:mybmw/features/lineups/domain/lineup_media.dart';
-import 'package:mybmw/features/lineups/domain/resolved_lineup.dart';
+import 'package:valorant_companion/features/encyclopedia/domain/game_map.dart';
+import 'package:valorant_companion/features/lineups/data/lineup_sources.dart';
+import 'package:valorant_companion/features/lineups/domain/lineup.dart';
+import 'package:valorant_companion/features/lineups/domain/lineup_media.dart';
+import 'package:valorant_companion/features/lineups/domain/resolved_lineup.dart';
 
 /// A map whose transform is the identity, so a callout at (x, y) lands at
 /// (y, x) on the minimap — the swap valorant-api documents.

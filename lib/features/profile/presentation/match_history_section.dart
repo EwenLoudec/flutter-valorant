@@ -4,12 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/diagonal_cut_clipper.dart';
 import '../../../core/widgets/fade_in_network_image.dart';
+import '../../../core/widgets/pressable_scale.dart';
 import '../../../core/widgets/staggered_fade_slide.dart';
 import '../../encyclopedia/domain/agent.dart';
 import '../../encyclopedia/providers/encyclopedia_providers.dart';
 import '../domain/player_match.dart';
 import '../domain/player_query.dart';
 import '../providers/profile_providers.dart';
+import 'match_detail_screen.dart';
 import 'profile_error.dart';
 import 'profile_section.dart';
 
@@ -24,6 +26,7 @@ class MatchHistorySection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final agents = ref.watch(agentsProvider).value ?? const <Agent>[];
+    final puuid = ref.watch(playerAccountProvider(query)).value?.puuid;
     final iconsByAgent = {
       for (final agent in agents) agent.displayName.toLowerCase(): agent.displayIcon,
     };
@@ -46,9 +49,16 @@ class MatchHistorySection extends ConsumerWidget {
                     if (index > 0) const SizedBox(height: 8),
                     StaggeredFadeSlide(
                       index: index,
-                      child: _MatchTile(
-                        match: match,
-                        agentIcon: iconsByAgent[match.agentName.toLowerCase()],
+                      child: PressableScale(
+                        onTap: puuid == null
+                            ? null
+                            : () => Navigator.of(context).push(
+                                MaterialPageRoute(builder: (_) => MatchDetailScreen(match: match, puuid: puuid)),
+                              ),
+                        child: _MatchTile(
+                          match: match,
+                          agentIcon: iconsByAgent[match.agentName.toLowerCase()],
+                        ),
                       ),
                     ),
                   ],
@@ -152,6 +162,8 @@ class _MatchTile extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(width: 4),
+            const Icon(Icons.chevron_right, size: 18, color: AppTheme.valorantMuted),
           ],
         ),
       ),

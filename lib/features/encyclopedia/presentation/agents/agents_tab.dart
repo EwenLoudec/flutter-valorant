@@ -4,12 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/async_list_view.dart';
 import '../../../../core/widgets/diagonal_cut_clipper.dart';
+import '../../../../core/widgets/entry_tile.dart';
 import '../../../../core/widgets/fade_in_network_image.dart';
 import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/staggered_fade_slide.dart';
 import '../../domain/agent.dart';
 import '../../providers/encyclopedia_providers.dart';
 import '../../../training/presentation/agent_quiz_page.dart';
+import '../../../training/presentation/catalog_quiz_pages.dart';
 import 'agent_detail_screen.dart';
 import 'agent_role_style.dart';
 import 'role_filter_bar.dart';
@@ -26,8 +28,19 @@ class AgentsTab extends ConsumerWidget {
       children: [
         const RoleFilterBar(),
         const Padding(
-          padding: EdgeInsets.fromLTRB(12, 0, 12, 12),
+          padding: EdgeInsets.fromLTRB(12, 0, 12, 8),
           child: _TrainingCard(),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+          child: EntryTile(
+            icon: Icons.local_fire_department_outlined,
+            title: 'DÉFI DU JOUR',
+            subtitle: 'Dix questions, les mêmes pour tous, une fois par jour',
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const DailyChallengePage()),
+            ),
+          ),
         ),
         Expanded(
           child: AsyncListView<Agent>(

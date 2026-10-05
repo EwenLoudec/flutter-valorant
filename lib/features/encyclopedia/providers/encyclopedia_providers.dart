@@ -7,8 +7,11 @@ import '../data/valorant_api_encyclopedia_repository.dart';
 import '../domain/agent.dart';
 import '../domain/competitive_season.dart';
 import '../domain/content_tier.dart';
+import '../domain/contract.dart';
+import '../domain/cosmetic.dart';
 import '../domain/game_map.dart';
 import '../domain/rank_tier.dart';
+import '../domain/store_content.dart';
 import '../domain/weapon.dart';
 import '../domain/weapon_skin.dart';
 
@@ -59,4 +62,40 @@ final rankTiersProvider = FutureProvider<List<RankTier>>((ref) {
 
 final currentSeasonProvider = FutureProvider<CompetitiveSeason?>((ref) {
   return ref.watch(encyclopediaRepositoryProvider).getCurrentSeason();
+});
+
+/// Player cards, sprays, buddies or titles — each list is fetched only when
+/// its tab is opened.
+final cosmeticsProvider = FutureProvider.family<List<Cosmetic>, CosmeticKind>((ref, kind) {
+  return ref.watch(encyclopediaRepositoryProvider).getCosmetics(kind);
+});
+
+final bundlesProvider = FutureProvider<List<Bundle>>((ref) {
+  return ref.watch(encyclopediaRepositoryProvider).getBundles();
+});
+
+final gameModesProvider = FutureProvider<List<GameMode>>((ref) {
+  return ref.watch(encyclopediaRepositoryProvider).getGameModes();
+});
+
+/// The shields of the buy menu, cheapest first.
+final gearProvider = FutureProvider<List<Gear>>((ref) {
+  return ref.watch(encyclopediaRepositoryProvider).getGear();
+});
+
+final contractsProvider = FutureProvider<List<Contract>>((ref) {
+  return ref.watch(encyclopediaRepositoryProvider).getContracts();
+});
+
+final currenciesProvider = FutureProvider<List<Currency>>((ref) {
+  return ref.watch(encyclopediaRepositoryProvider).getCurrencies();
+});
+
+/// Every weapon skin level, to name the skins contracts reward.
+final skinLevelsProvider = FutureProvider<Map<String, SkinLevelInfo>>((ref) {
+  return ref.watch(encyclopediaRepositoryProvider).getSkinLevels();
+});
+
+final seasonStartsProvider = FutureProvider<Map<String, DateTime>>((ref) {
+  return ref.watch(encyclopediaRepositoryProvider).getSeasonStarts();
 });

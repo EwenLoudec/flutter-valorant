@@ -28,6 +28,13 @@ class HenrikApiClient {
 
   static const _baseUrl = 'https://api.henrikdev.xyz/valorant';
 
+  /// Where a free key is generated: dashboard, then « API Keys », then
+  /// « Generate New Key ».
+  static final dashboardUri = Uri.parse('https://api.henrikdev.xyz/dashboard/');
+
+  /// The dashboard signs in with Discord, through the HenrikDev server.
+  static final discordUri = Uri.parse('https://discord.gg/X3GaVkX2YN');
+
   final http.Client _httpClient;
 
   Future<Map<String, dynamic>> getObject(
@@ -46,6 +53,12 @@ class HenrikApiClient {
   }) async {
     final data = await _get(path, apiKey: apiKey, query: query);
     return data as List<dynamic>;
+  }
+
+  /// The `data` field as-is, for endpoints whose shape changed between
+  /// versions.
+  Future<dynamic> getData(String path, {required String apiKey, Map<String, String>? query}) {
+    return _get(path, apiKey: apiKey, query: query);
   }
 
   Future<dynamic> _get(String path, {required String apiKey, Map<String, String>? query}) async {

@@ -27,11 +27,15 @@ class MapCompositionCard extends StatelessWidget {
               children: [
                 const Icon(Icons.military_tech, size: 16, color: AppTheme.valorantRed),
                 const SizedBox(width: 6),
-                const Text(
-                  'COMPOSITION MÉTA',
-                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12.5, letterSpacing: 0.5),
+                const Expanded(
+                  child: Text(
+                    'COMPOSITION MÉTA',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12.5, letterSpacing: 0.5),
+                  ),
                 ),
-                const Spacer(),
+                const SizedBox(width: 8),
                 Text(
                   '${composition.winRatePercent}% WR',
                   style: const TextStyle(color: AppTheme.valorantRed, fontWeight: FontWeight.w800, fontSize: 12),

@@ -7,11 +7,13 @@ import '../domain/lineup.dart';
 import '../domain/lineup_media.dart';
 import '../domain/resolved_lineup.dart';
 import '../providers/lineups_providers.dart';
+import 'lineup_collections_screen.dart';
 import 'lineup_demo_player.dart';
 import 'lineup_editor_screen.dart';
 import 'lineup_map_painter.dart';
 import 'lineup_map_view.dart';
 import 'lineup_steps.dart';
+import 'lineup_transfer_dialogs.dart';
 import 'lineup_zoom_view.dart';
 import 'lineup_visuals.dart';
 
@@ -84,6 +86,7 @@ class LineupDetailScreen extends ConsumerWidget {
     }
 
     final lineup = resolved.lineup;
+    final isFavorite = ref.watch(lineupCollectionsProvider).value?.isFavorite(lineup.id) ?? false;
     final target = lineup.to;
     final demoUrl = lineup.demoUrl;
 
@@ -91,6 +94,29 @@ class LineupDetailScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(lineup.title.toUpperCase()),
         actions: [
+          IconButton(
+            tooltip: isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris',
+            onPressed: () => ref.read(lineupCollectionsProvider.notifier).toggleFavorite(lineup.id),
+            icon: Icon(
+              isFavorite ? Icons.star_rounded : Icons.star_outline_rounded,
+              color: isFavorite ? const Color(0xFFF2B90C) : null,
+            ),
+          ),
+          IconButton(
+            tooltip: 'Collections',
+            onPressed: () => showModalBottomSheet<void>(
+              context: context,
+              backgroundColor: AppTheme.valorantSurface,
+              shape: const RoundedRectangleBorder(),
+              builder: (_) => LineupCollectionsSheet(lineupId: lineup.id),
+            ),
+            icon: const Icon(Icons.playlist_add),
+          ),
+          IconButton(
+            tooltip: 'Partager ce spot',
+            onPressed: () => copyLineupsToClipboard(context, [lineup]),
+            icon: const Icon(Icons.ios_share),
+          ),
           if (!lineup.isBundled)
             IconButton(
               tooltip: 'Supprimer',

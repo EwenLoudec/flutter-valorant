@@ -6,6 +6,7 @@ import '../../../core/widgets/valorant_input.dart';
 import '../domain/player_query.dart';
 import '../domain/player_settings.dart';
 import '../providers/profile_providers.dart';
+import 'henrik_key_help.dart';
 
 /// Riot ID, region and API key entry. Shown full page until a profile is
 /// configured, then reopened in a sheet to edit it.
@@ -81,6 +82,7 @@ class _RiotIdFormState extends ConsumerState<RiotIdForm> {
         ValorantFieldLabel('Région'),
         DropdownButtonFormField<String>(
           initialValue: _region.code,
+          isExpanded: true,
           dropdownColor: AppTheme.valorantSurface,
           decoration: valorantInputDecoration(),
           items: [
@@ -102,12 +104,8 @@ class _RiotIdFormState extends ConsumerState<RiotIdForm> {
           onSubmitted: (_) => _submit(),
         ),
         const SizedBox(height: 6),
-        const Text(
-          'Les données de compte passent par api.henrikdev.xyz, qui demande une '
-          'clé gratuite (Discord HenrikDev). Elle reste sur cet appareil.',
-          style: TextStyle(fontSize: 11.5, color: AppTheme.valorantMuted, height: 1.4),
-        ),
-        const SizedBox(height: 20),
+        const HenrikKeyHelp(),
+        const SizedBox(height: 12),
         FilledButton(
           onPressed: _submit,
           style: FilledButton.styleFrom(

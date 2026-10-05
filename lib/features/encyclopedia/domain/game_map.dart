@@ -69,10 +69,14 @@ class GameMap {
   /// Fractional (0-1) position of [callout] on the [displayIcon] tactical
   /// minimap image — valorant-api.com's documented world-to-minimap transform
   /// (note x/y are swapped between game space and minimap space).
-  Offset normalizedPosition(MapCallout callout) {
-    return Offset(
-      callout.gameY * xMultiplier + xScalarToAdd,
-      callout.gameX * yMultiplier + yScalarToAdd,
-    );
+  Offset normalizedPosition(MapCallout callout) => normalizedPoint(callout.gameX, callout.gameY);
+
+  /// The same transform for any point in game space, e.g. where a kill
+  /// happened.
+  Offset normalizedPoint(double gameX, double gameY) {
+    return Offset(gameY * xMultiplier + xScalarToAdd, gameX * yMultiplier + yScalarToAdd);
   }
+
+  /// Whether the map carries the coefficients needed to place game points.
+  bool get canPlaceGamePoints => xMultiplier != 0 && yMultiplier != 0;
 }

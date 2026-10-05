@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mybmw/features/training/domain/quiz_run.dart';
+import 'package:valorant_companion/features/training/domain/quiz_run.dart';
 
 void main() {
   group('QuizRun', () {

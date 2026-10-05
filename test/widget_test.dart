@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:mybmw/app.dart';
+import 'package:valorant_companion/app.dart';
 
 void main() {
   testWidgets('Home shows the agents page', (WidgetTester tester) async {

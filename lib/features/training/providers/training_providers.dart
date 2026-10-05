@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/ability_sound_source.dart';
 import '../data/quiz_score_store.dart';
+import '../domain/daily_challenge.dart';
 import '../domain/quiz_run.dart';
 
 final quizScoreStoreProvider = Provider<QuizScoreStore>((ref) => QuizScoreStore());
@@ -23,6 +24,9 @@ class QuizProgress {
 
   /// The agent exercise has a single mode.
   int? get bestForAgents => bestScores['${QuizKind.agent.code}|Agents|mixed'];
+
+  /// Best score of any non-map exercise, keyed like [QuizRun.modeKey].
+  int? bestFor(QuizKind kind, String label, String mode) => bestScores['${kind.code}|$label|$mode'];
 }
 
 class QuizProgressNotifier extends AsyncNotifier<QuizProgress> {
@@ -42,7 +46,7 @@ class QuizProgressNotifier extends AsyncNotifier<QuizProgress> {
     final isRecord = run.score > previous;
     if (isRecord) bestScores[run.modeKey] = run.score;
 
-    final history = [run, ...current.history].take(QuizScoreStore.historyLimit).toList();
+    final history = QuizScoreStore.trimHistory([run, ...current.history]);
     state = AsyncData(QuizProgress(bestScores: bestScores, history: history));
 
     final store = ref.read(quizScoreStoreProvider);
@@ -63,3 +67,22 @@ final abilitySoundSourceProvider = Provider<AbilitySoundSource>((ref) => Ability
 final abilitySoundsProvider = FutureProvider<Map<String, Map<String, String>>>((ref) {
   return ref.watch(abilitySoundSourceProvider).getSoundsByAgent();
 });
+
+/// The days-in-a-row count of the daily challenge.
+class DailyStreakNotifier extends AsyncNotifier<DailyStreak> {
+  @override
+  Future<DailyStreak> build() => ref.read(quizScoreStoreProvider).loadDailyStreak();
+
+  /// Files the day's challenge. Returns the streak afterwards.
+  Future<DailyStreak> complete(DateTime date, int score) async {
+    final current = state.value ?? const DailyStreak();
+    final updated = current.complete(date, score);
+    if (identical(updated, current)) return current;
+
+    state = AsyncData(updated);
+    await ref.read(quizScoreStoreProvider).saveDailyStreak(updated);
+    return updated;
+  }
+}
+
+final dailyStreakProvider = AsyncNotifierProvider<DailyStreakNotifier, DailyStreak>(DailyStreakNotifier.new);
