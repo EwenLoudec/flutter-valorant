@@ -32,6 +32,9 @@ class HenrikApiClient {
   /// « Generate New Key ».
   static final dashboardUri = Uri.parse('https://api.henrikdev.xyz/dashboard/');
 
+  /// The dashboard signs in with Discord, through the HenrikDev server.
+  static final discordUri = Uri.parse('https://discord.gg/X3GaVkX2YN');
+
   final http.Client _httpClient;
 
   Future<Map<String, dynamic>> getObject(

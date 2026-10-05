@@ -246,7 +246,8 @@ void main() {
     await _pump(tester, const RadiantLeaderboardScreen());
 
     expect(find.text('UNE CLÉ API EST NÉCESSAIRE'), findsOneWidget);
-    expect(find.text('OBTENIR UNE CLÉ GRATUITE'), findsOneWidget);
+    expect(find.text('REJOINDRE LE DISCORD'), findsOneWidget);
+    expect(find.text('TABLEAU DE BORD'), findsOneWidget);
     await tester.tap(find.text('AFFICHER LE CLASSEMENT'));
     await tester.pumpAndSettle();
     expect(find.textContaining('HDEV-'), findsWidgets);

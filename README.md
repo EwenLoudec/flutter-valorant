@@ -202,9 +202,10 @@ publique et sans authentification.
 ### Clé API pour le profil et le classement
 
 Les statistiques de joueur et le classement passent par l'API communautaire **HenrikDev**,
-qui demande une clé gratuite : se connecter sur le
-[tableau de bord](https://api.henrikdev.xyz/dashboard/), ouvrir « API Keys », puis
-« Generate New Key ». Deux façons de la fournir :
+qui demande une clé gratuite. Le tableau de bord se connecte avec un compte Discord :
+rejoindre le [serveur Discord HenrikDev](https://discord.gg/X3GaVkX2YN), se connecter sur le
+[tableau de bord](https://api.henrikdev.xyz/dashboard/) avec ce compte, ouvrir « API Keys »,
+puis « Generate New Key ». Deux façons de fournir la clé :
 
 1. **Dans l'app** : onglet PROFIL → champ « Clé API HenrikDev », ou directement sur l'écran
    du classement (onglet RANGS → CLASSEMENT). Elle est stockée sur l'appareil
