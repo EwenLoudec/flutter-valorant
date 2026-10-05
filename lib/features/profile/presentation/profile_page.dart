@@ -4,11 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_theme.dart';
 import '../domain/player_query.dart';
 import '../providers/profile_providers.dart';
+import 'collection_tools_section.dart';
 import 'match_history_section.dart';
 import 'owned_skins_section.dart';
 import 'player_header_card.dart';
+import 'player_stats_section.dart';
 import 'profile_section.dart';
 import 'rank_card.dart';
+import 'rank_history_section.dart';
 import 'riot_id_form.dart';
 import 'weapon_accuracy_section.dart';
 
@@ -84,6 +87,8 @@ class _SetupBody extends StatelessWidget {
           // The collection lives on the device, so it is worth showing even
           // before an account is linked.
           const OwnedSkinsSection(),
+          const SizedBox(height: 28),
+          const CollectionToolsSection(),
         ],
       ),
     );
@@ -99,6 +104,7 @@ class _ProfileBody extends ConsumerWidget {
     ref.invalidate(playerAccountProvider(query));
     ref.invalidate(playerRankProvider(query));
     ref.invalidate(playerMatchesProvider(query));
+    ref.invalidate(playerRankHistoryProvider(query));
 
     await Future.wait([
       ref.read(playerRankProvider(query).future),
@@ -119,11 +125,19 @@ class _ProfileBody extends ConsumerWidget {
           const SizedBox(height: 20),
           ProfileSection(title: 'Rang compétitif', child: RankCard(query: query)),
           const SizedBox(height: 20),
+          RankHistorySection(query: query),
+          const SizedBox(height: 20),
+          SessionSection(query: query),
+          const SizedBox(height: 20),
+          PlayerStatsSection(query: query),
+          const SizedBox(height: 20),
           WeaponAccuracySection(query: query),
           const SizedBox(height: 20),
           MatchHistorySection(query: query),
           const SizedBox(height: 20),
           const OwnedSkinsSection(),
+          const SizedBox(height: 20),
+          const CollectionToolsSection(),
         ],
       ),
     );

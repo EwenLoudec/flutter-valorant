@@ -1,7 +1,11 @@
 /// Which exercise a run belongs to.
 enum QuizKind {
   map('map', 'Cartes'),
-  agent('agent', 'Agents');
+  agent('agent', 'Agents'),
+  weapon('weapon', 'Armes'),
+  rank('rank', 'Rangs'),
+  lineup('lineup', 'Lineups'),
+  daily('daily', 'Défi du jour');
 
   const QuizKind(this.code, this.label);
 
@@ -59,6 +63,8 @@ class QuizRun {
   String get modeLabel => switch (mode) {
     'full' => 'Partie complète',
     'focus' => 'Ciblé',
+    'daily' => 'Défi du jour',
+    'placement' => 'Placement sur le plan',
     _ => 'Questions mêlées',
   };
 

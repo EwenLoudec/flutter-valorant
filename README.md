@@ -8,8 +8,8 @@ Toutes les données de jeu (visuels, statistiques, traductions françaises) vien
 [valorant-api.com](https://valorant-api.com) ; les données de compte viennent de
 [api.henrikdev.xyz](https://docs.henrikdev.xyz).
 
-> Le dossier du projet s'appelle encore `mybmw` (nom du template de départ), mais
-> l'application elle-même s'appelle *Valorant Companion*.
+> Le dossier du projet s'appelle encore `mybmw` (nom du template de départ) ; le paquet
+> Dart, lui, s'appelle `valorant_companion`, comme l'application.
 
 ---
 
@@ -88,6 +88,15 @@ autres outils restent sur navigateur.
   quatre étapes et les médias. Tout est enregistré sur l'appareil.
 - **97 spots livrés avec l'app**, couvrant les 29 agents sur les 13 cartes. Ils servent de
   point de départ : voir les limites plus bas.
+- **Recherche** dans tous les spots de toutes les cartes : agent, callout, compétence, touche,
+  camp — chaque mot doit correspondre (« viper b main »).
+- **Favoris et collections** : une étoile sur la fiche, et des listes nommées (« Mes lineups
+  Viper sur Ascent ») regroupées dans *Mes spots*.
+- **Partage en texte** : un spot (depuis sa fiche) ou tous les tiens (menu de l'onglet) sont
+  copiés en JSON, à coller à un coéquipier qui les importe. Les photos restent sur l'appareil
+  — ce sont des fichiers locaux —, la vidéo épinglée voyage avec le spot.
+- **Quiz lineups** : on te donne l'agent, la compétence et la position de départ, tu touches le
+  plan là où l'utilitaire atterrit. Cinq lancers, deux par carte au plus.
 
 ### 🧑‍🚀 Agents
 - Liste complète des agents jouables, filtrable par rôle (duelliste, initiateur, contrôleur, sentinelle).
@@ -103,6 +112,9 @@ autres outils restent sur navigateur.
   une piste audio (52 clips, 14 agents), pour qu'une question ne tombe jamais sur du silence.
 - Quatre propositions par question, correction immédiate qui nomme l'agent et la compétence,
   1000 points en jeu, record et historique conservés sur l'appareil.
+- **Défi du jour** : dix questions mêlant agents, sons, armes et rangs, tirées avec la date
+  comme graine — le même tirage pour tout le monde ce jour-là. Une partie par jour, et une
+  **série** de jours consécutifs.
 - Fiche détaillée : portrait, description, dégradé de couleurs officiel, et les 4 compétences dépliables.
 - Aperçu vidéo de chaque compétence (clips officiels de playvalorant.com, pré-collectés dans
   `assets/data/ability_videos.json` via `scripts/scrape_ability_videos.ps1`).
@@ -111,6 +123,12 @@ autres outils restent sur navigateur.
 - Catalogue trié par prix, filtrable par catégorie.
 - Fiche arme : prix, cadence de tir, chargeur, et **tableau des dégâts tête / corps / jambes par distance**.
 - Carrousel des skins de l'arme, colorés selon leur rareté (Select → Ultra), avec les vidéos d'animation.
+- **Simulateur d'économie** : crédits, arme, bouclier (les trois du catalogue, avec leur
+  description), utilitaire, kills, spike et série de défaites → ce qui reste, et les crédits du
+  prochain round en cas de victoire ou de défaite, plus la dépense maximale qui garde un full
+  buy. Règles standard : victoire 3 000, défaite 1 900 / 2 400 / 2 900, kill 200, spike 300,
+  plafond 9 000.
+- **Quiz armes** : reconnaître une arme à sa silhouette, ou à l'un de ses skins.
 
 ### 🗺️ Cartes
 - Toutes les cartes classées, avec un badge « compétitif actif » sur celles du pool en cours.
@@ -130,15 +148,37 @@ autres outils restent sur navigateur.
   et la bonne position apparaît après chaque réponse, reliée à ton doigt. Record par carte
   **et par formule**, plus un **historique des 25 dernières parties**, gardés sur l'appareil.
 
+- **Constructeur de composition** : cinq agents pour une carte, le compte des rôles, les
+  manques signalés (pas de contrôleur, trop de duellistes…) et la comparaison avec la
+  composition méta de la carte, applicable d'un geste.
+- **Modes de jeu** : règles, durée et changement de camp de chaque mode du client.
+
 ### 🏅 Rangs
 - Tous les paliers du plus haut au plus bas, aux couleurs officielles, avec l'épisode / acte en cours.
+- **Classement** : le top 200 de la région (HenrikDev), avec carte de joueur, RR, victoires,
+  recherche par nom, et ton compte mis en avant s'il y figure.
+- **Quiz rangs** : nommer le palier depuis son emblème.
 
 ### 👤 Profil
 Saisissez votre Riot ID (`Pseudo#TAG`) et votre région pour afficher :
 - **Rang compétitif** : palier, RR avec barre de progression, dernier gain/perte de points, elo, pic de carrière.
-- **Historique** : les 10 dernières parties (agent, carte, mode, score en rounds, K/D/A, % de têtes, victoire/défaite).
+- **Évolution du RR** : la courbe de l'elo sur les dernières parties classées ; on touche ou
+  on glisse pour lire une partie.
+- **Dernière session** : parties enchaînées (moins de 3 h d'écart), bilan, RR gagné ou perdu,
+  K/D, série en cours.
+- **Statistiques** : par agent (parties, victoires, K/D, ACS), par carte (meilleure et pire),
+  et manches gagnées en attaque / en défense.
+- **Historique** : les 10 dernières parties (agent, carte, mode, score en rounds, K/D/A, % de têtes,
+  victoire/défaite). **Une partie se touche** : tableau des 10 joueurs (rang, K/D/A, ACS, HS %,
+  ADR), chronologie des manches (comment chacune s'est finie, de quel côté), économie round
+  par round (pistolets, éco, force, full buy — estimés) et carte de tes kills et de tes morts.
+  Tout vient de la réponse déjà chargée : ouvrir une partie ne coûte aucune requête.
 - **Précision arme par arme** : répartition tête / corps / jambes, globale puis pour chaque arme.
 - **Mes skins** : votre collection, cochée depuis le catalogue et conservée sur l'appareil.
+- **Collection et outils**, utilisables sans compte : cartes de joueur, graffitis,
+  porte-bonheur et titres à cocher ; tous les bundles de la boutique ; les contrats (agents,
+  événements, passes de combat) avec chaque récompense nommée ; et un **lecteur de code de
+  réticule** qui dessine le réticule, le copie et garde tes favoris.
 
 Le Riot ID, la région et la clé API sont mémorisés localement — un tirer-pour-rafraîchir met tout à jour.
 
@@ -159,13 +199,16 @@ flutter run
 L'encyclopédie fonctionne immédiatement, sans aucune clé : valorant-api.com est une API
 publique et sans authentification.
 
-### Clé API pour la page Profil
+### Clé API pour le profil et le classement
 
-Les statistiques de joueur passent par l'API communautaire **HenrikDev**, qui demande une
-clé gratuite (à demander sur leur [Discord](https://docs.henrikdev.xyz)). Deux façons de la fournir :
+Les statistiques de joueur et le classement passent par l'API communautaire **HenrikDev**,
+qui demande une clé gratuite : se connecter sur le
+[tableau de bord](https://api.henrikdev.xyz/dashboard/), ouvrir « API Keys », puis
+« Generate New Key ». Deux façons de la fournir :
 
-1. **Dans l'app** : onglet PROFIL → champ « Clé API HenrikDev ». Elle est stockée sur
-   l'appareil (`shared_preferences`) et n'est jamais envoyée ailleurs qu'à HenrikDev.
+1. **Dans l'app** : onglet PROFIL → champ « Clé API HenrikDev », ou directement sur l'écran
+   du classement (onglet RANGS → CLASSEMENT). Elle est stockée sur l'appareil
+   (`shared_preferences`) et n'est jamais envoyée ailleurs qu'à HenrikDev.
 2. **À la compilation**, pour ne pas la ressaisir :
 
 ```bash
@@ -184,7 +227,7 @@ reliées par des providers [Riverpod](https://riverpod.dev).
 lib/
 ├─ app.dart                     # MaterialApp + thème
 ├─ core/
-│  ├─ network/                  # clients HTTP : valorant-api.com et HenrikDev
+│  ├─ network/                  # clients HTTP (valorant-api.com, HenrikDev) + cache hors-ligne
 │  ├─ theme/                    # palette et thème Valorant
 │  └─ widgets/                  # briques réutilisables (coins coupés, images, nav…)
 └─ features/
@@ -192,9 +235,13 @@ lib/
    │  ├─ domain/ data/ presentation/ providers/
    ├─ lineups/                  # spots sur le plan tactique + éditeur
    │  ├─ domain/ data/ presentation/ providers/
-   ├─ training/                 # mini-jeux : callouts sur le plan, quiz agents
+   ├─ training/                 # mini-jeux : callouts, agents, armes, rangs, lineups, défi du jour
    │  ├─ domain/ data/ presentation/ providers/
-   └─ profile/                  # Riot ID, rang, historique, précision, skins
+   ├─ tools/                    # économie, composition, réticule
+   │  ├─ domain/ data/ presentation/ providers/
+   ├─ collection/               # cosmétiques, bundles, contrats
+   │  ├─ domain/ presentation/ providers/
+   └─ profile/                  # Riot ID, rang, RR, stats, détail des parties, classement
       ├─ domain/ data/ presentation/ providers/
 ```
 
@@ -265,9 +312,19 @@ dart run scripts/scan_ability_sounds.dart
   d'implémentation. Les clips de compétences et de skins affichent alors un message explicite
   au lieu d'un cadre vide — teste sur Android, iOS, macOS ou le web.
 - La page profil couvre les comptes **PC** ; la console utilise une autre plateforme côté API.
-- Le classement Radiant (onglet Rangs) est encore un écran d'attente — il pourra utiliser
-  l'endpoint leaderboard de HenrikDev maintenant qu'une clé est gérée par l'app.
 - La composition méta par carte est saisie à la main et vieillit avec les patchs.
+- **Le camp joué à chaque manche est déduit**, pas lu : la pose du spike prouve qui attaquait,
+  sinon la mi-temps et la règle « les rouges attaquent d'abord ». Les modes sans mi-temps
+  (combat à mort…) ne comptent pas dans les statistiques attaque / défense.
+- **Le type d'achat d'une manche est une estimation** tirée de la valeur moyenne des
+  équipements (éco sous 1 500, full buy à partir de 3 900) : Riot ne classe pas les achats.
+- **Le classement s'arrête au top 200** de la région ; au-delà, l'API pagine des milliers de
+  joueurs.
+- **Le cache hors-ligne ne concerne pas le web** : sur Android, iOS et desktop, les réponses de
+  valorant-api.com sont gardées 12 h et resservies sans réseau ; sur le web, c'est le cache du
+  navigateur qui joue ce rôle.
+- Le partage de spots se fait en texte à copier-coller, pas par lien : un lien demanderait un
+  serveur pour héberger les spots.
 
 ---
 

@@ -72,7 +72,10 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                Row(
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -90,10 +93,7 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
                         ),
                       ),
                     ),
-                    if (map.tacticalDescription != null) ...[
-                      const SizedBox(width: 8),
-                      Chip(label: Text(map.tacticalDescription!)),
-                    ],
+                    if (map.tacticalDescription != null) Chip(label: Text(map.tacticalDescription!)),
                   ],
                 ),
                 const SizedBox(height: 20),

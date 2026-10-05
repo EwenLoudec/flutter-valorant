@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mybmw/features/encyclopedia/domain/game_map.dart';
-import 'package:mybmw/features/training/domain/map_quiz.dart';
+import 'package:valorant_companion/features/encyclopedia/domain/game_map.dart';
+import 'package:valorant_companion/features/training/domain/map_quiz.dart';
 
 /// Identity transform: a callout at (x, y) lands at (y, x) on the minimap.
 GameMap _map() {

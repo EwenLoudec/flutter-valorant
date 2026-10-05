@@ -4,10 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/async_list_view.dart';
 import '../../../../core/widgets/diagonal_cut_clipper.dart';
+import '../../../../core/widgets/entry_tile.dart';
 import '../../../../core/widgets/fade_in_network_image.dart';
 import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/staggered_fade_slide.dart';
 import '../../domain/weapon.dart';
+import '../../../tools/presentation/economy_screen.dart';
+import '../../../training/presentation/catalog_quiz_pages.dart';
 import '../../providers/encyclopedia_providers.dart';
 import 'category_filter_bar.dart';
 import 'weapon_category_style.dart';
@@ -24,6 +27,26 @@ class WeaponsTab extends ConsumerWidget {
     return Column(
       children: [
         const CategoryFilterBar(),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
+          child: EntryTileRow(
+            tiles: [
+              EntryTile(
+                icon: Icons.savings_outlined,
+                title: 'ÉCONOMIE',
+                subtitle: 'Achat, boucliers, prochain round',
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EconomyScreen())),
+              ),
+              EntryTile(
+                icon: Icons.sports_esports_outlined,
+                title: 'QUIZ ARMES',
+                subtitle: 'Silhouettes et skins',
+                isHighlighted: true,
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const WeaponQuizPage())),
+              ),
+            ],
+          ),
+        ),
         Expanded(
           child: AsyncListView<Weapon>(
             value: weaponsAsync,

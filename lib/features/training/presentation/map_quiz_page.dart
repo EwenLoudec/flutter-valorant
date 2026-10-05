@@ -10,6 +10,7 @@ import '../../../core/widgets/pressable_scale.dart';
 import '../../encyclopedia/domain/game_map.dart';
 import '../../encyclopedia/providers/encyclopedia_providers.dart';
 import '../domain/map_quiz.dart';
+import '../domain/quiz_run.dart';
 import '../providers/training_providers.dart';
 import 'map_quiz_screen.dart';
 import 'quiz_history_view.dart';
@@ -102,7 +103,12 @@ class MapQuizPage extends ConsumerWidget {
                 const SizedBox(height: 8),
               ],
               const SizedBox(height: 14),
-              QuizHistoryView(history: progress?.history ?? const []),
+              QuizHistoryView(
+                history: [
+                  for (final run in progress?.history ?? const <QuizRun>[])
+                    if (run.kind == QuizKind.map) run,
+                ],
+              ),
             ],
           );
         },

@@ -4,13 +4,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/async_list_view.dart';
 import '../../../../core/widgets/diagonal_cut_clipper.dart';
+import '../../../../core/widgets/entry_tile.dart';
 import '../../../../core/widgets/fade_in_network_image.dart';
 import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/staggered_fade_slide.dart';
 import '../../data/map_meta_data.dart';
 import '../../domain/game_map.dart';
 import '../../providers/encyclopedia_providers.dart';
+import '../../../tools/presentation/composition_builder_screen.dart';
 import '../../../training/presentation/map_quiz_page.dart';
+import 'game_modes_screen.dart';
 import 'map_detail_screen.dart';
 
 class MapsTab extends ConsumerWidget {
@@ -34,14 +37,36 @@ class MapsTab extends ConsumerWidget {
 
         return ListView.separated(
           padding: const EdgeInsets.all(12),
-          // The first row is the training entry, the rest are the maps.
-          itemCount: maps.length + 1,
+          // The first rows are the training and tool entries, the rest are the maps.
+          itemCount: maps.length + 2,
           separatorBuilder: (_, _) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
             if (index == 0) return const _TrainingCard();
+            if (index == 1) {
+              return EntryTileRow(
+                tiles: [
+                  EntryTile(
+                    icon: Icons.groups_2_outlined,
+                    title: 'COMPOSITION',
+                    subtitle: 'Construis ta compo à 5',
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const CompositionBuilderScreen()),
+                    ),
+                  ),
+                  EntryTile(
+                    icon: Icons.sports_esports_outlined,
+                    title: 'MODES DE JEU',
+                    subtitle: 'Règles et durées',
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const GameModesScreen()),
+                    ),
+                  ),
+                ],
+              );
+            }
             return StaggeredFadeSlide(
               index: index,
-              child: _MapCard(map: maps[index - 1]),
+              child: _MapCard(map: maps[index - 2]),
             );
           },
         );

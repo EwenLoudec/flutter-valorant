@@ -2,8 +2,11 @@ import '../../../core/network/valorant_api_client.dart';
 import '../domain/agent.dart';
 import '../domain/competitive_season.dart';
 import '../domain/content_tier.dart';
+import '../domain/contract.dart';
+import '../domain/cosmetic.dart';
 import '../domain/game_map.dart';
 import '../domain/rank_tier.dart';
+import '../domain/store_content.dart';
 import '../domain/weapon.dart';
 import '../domain/weapon_skin.dart';
 import 'encyclopedia_repository.dart';
@@ -106,5 +109,86 @@ class ValorantApiEncyclopediaRepository implements EncyclopediaRepository {
       episodeName: parent?['displayName'] as String? ?? '',
       actName: currentAct['displayName'] as String? ?? '',
     );
+  }
+
+  @override
+  Future<List<Cosmetic>> getCosmetics(CosmeticKind kind) async {
+    final data = await _client.getList('/${kind.endpoint}');
+    final cosmetics = [
+      for (final json in data)
+        if (json is Map<String, dynamic>) ?Cosmetic.fromJson(json, kind),
+    ];
+    cosmetics.sort((a, b) => a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()));
+    return cosmetics;
+  }
+
+  @override
+  Future<List<Bundle>> getBundles() async {
+    final data = await _client.getList('/bundles');
+    final bundles = [
+      for (final json in data)
+        if (json is Map<String, dynamic> && json['uuid'] is String) Bundle.fromJson(json),
+    ].where((bundle) => bundle.displayName.isNotEmpty).toList();
+    bundles.sort((a, b) => a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()));
+    return bundles;
+  }
+
+  @override
+  Future<List<GameMode>> getGameModes() async {
+    final data = await _client.getList('/gamemodes');
+    final modes = [
+      for (final json in data)
+        if (json is Map<String, dynamic> && json['uuid'] is String) GameMode.fromJson(json),
+    ].where((mode) => mode.isPlayable).toList();
+    modes.sort((a, b) => a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()));
+    return modes;
+  }
+
+  @override
+  Future<List<Gear>> getGear() async {
+    final data = await _client.getList('/gear');
+    final gear = [
+      for (final json in data)
+        if (json is Map<String, dynamic> && json['uuid'] is String) Gear.fromJson(json),
+    ];
+    gear.sort((a, b) => a.cost.compareTo(b.cost));
+    return gear;
+  }
+
+  @override
+  Future<List<Contract>> getContracts() async {
+    final data = await _client.getList('/contracts');
+    return [
+      for (final json in data)
+        if (json is Map<String, dynamic> && json['uuid'] is String) ?Contract.fromJson(json),
+    ];
+  }
+
+  @override
+  Future<List<Currency>> getCurrencies() async {
+    final data = await _client.getList('/currencies');
+    return [
+      for (final json in data)
+        if (json is Map<String, dynamic> && json['uuid'] is String) Currency.fromJson(json),
+    ];
+  }
+
+  @override
+  Future<Map<String, SkinLevelInfo>> getSkinLevels() async {
+    final data = await _client.getList('/weapons/skinlevels');
+    return {
+      for (final json in data)
+        if (json is Map<String, dynamic> && json['uuid'] is String) json['uuid'] as String: SkinLevelInfo.fromJson(json),
+    };
+  }
+
+  @override
+  Future<Map<String, DateTime>> getSeasonStarts() async {
+    final data = await _client.getList('/seasons');
+    return {
+      for (final json in data)
+        if (json is Map<String, dynamic> && json['uuid'] is String)
+          json['uuid'] as String: ?DateTime.tryParse(json['startTime'] as String? ?? ''),
+    };
   }
 }

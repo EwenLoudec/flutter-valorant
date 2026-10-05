@@ -104,12 +104,12 @@ class _OverallCard extends StatelessWidget {
           const SizedBox(height: 12),
           _ShotBar(accuracy: overall),
           const SizedBox(height: 10),
-          Row(
+          Wrap(
+            spacing: 14,
+            runSpacing: 4,
             children: [
               _Legend(color: _headshotColor, label: 'Tête', count: overall.headshots),
-              const SizedBox(width: 14),
               _Legend(color: _bodyshotColor, label: 'Corps', count: overall.bodyshots),
-              const SizedBox(width: 14),
               _Legend(color: _legshotColor, label: 'Jambes', count: overall.legshots),
             ],
           ),

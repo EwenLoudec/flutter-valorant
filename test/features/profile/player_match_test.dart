@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mybmw/features/profile/domain/player_match.dart';
-import 'package:mybmw/features/profile/domain/weapon_accuracy.dart';
+import 'package:valorant_companion/features/profile/domain/player_match.dart';
+import 'package:valorant_companion/features/profile/domain/weapon_accuracy.dart';
 
 const _puuid = 'player-1';
 

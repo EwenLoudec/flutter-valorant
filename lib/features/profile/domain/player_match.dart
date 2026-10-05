@@ -1,3 +1,6 @@
+import 'json_reading.dart';
+import 'match_detail.dart';
+
 enum MatchOutcome { win, loss, draw }
 
 /// How a player's shots landed with one weapon, over one match.
@@ -33,32 +36,38 @@ class PlayerMatch {
     required this.roundsLost,
     required this.outcome,
     required this.shotsByWeapon,
+    this.mapId,
+    this.queueId = '',
+    this.detail,
   });
 
   /// Parses one entry of the HenrikDev match list. Several field names moved
   /// between v2 and v4 of that API, so each read falls back to the other
   /// spelling.
   factory PlayerMatch.fromJson(Map<String, dynamic> json, {required String puuid}) {
-    final metadata = _asMap(json['metadata']);
+    final metadata = asMap(json['metadata']);
     final player = _findPlayer(json, puuid);
-    final stats = _asMap(player['stats']);
+    final stats = asMap(player['stats']);
     final teamId = (player['team_id'] ?? player['team'])?.toString();
     final rounds = _roundScore(json, teamId);
 
     return PlayerMatch(
       matchId: (metadata['match_id'] ?? metadata['matchid'] ?? '').toString(),
-      mapName: _displayName(metadata['map']),
-      mode: _displayName(metadata['queue'] ?? metadata['mode']),
+      mapName: displayNameOf(metadata['map']),
+      mode: displayNameOf(metadata['queue'] ?? metadata['mode']),
       startedAt: _startedAt(metadata),
-      agentName: _displayName(player['agent'] ?? player['character']),
-      kills: _asInt(stats['kills']),
-      deaths: _asInt(stats['deaths']),
-      assists: _asInt(stats['assists']),
-      score: _asInt(stats['score']),
+      agentName: displayNameOf(player['agent'] ?? player['character']),
+      kills: asInt(stats['kills']),
+      deaths: asInt(stats['deaths']),
+      assists: asInt(stats['assists']),
+      score: asInt(stats['score']),
       roundsWon: rounds.$1,
       roundsLost: rounds.$2,
       outcome: _outcome(json, teamId, rounds),
       shotsByWeapon: _shotsByWeapon(json, puuid, player),
+      mapId: idOf(metadata['map']) ?? asStringOrNull(metadata['map_id']),
+      queueId: (idOf(metadata['queue']) ?? metadata['mode_id'] ?? '').toString().toLowerCase(),
+      detail: player.isEmpty ? null : _detailOf(json, puuid),
     );
   }
 
@@ -76,37 +85,29 @@ class PlayerMatch {
   final MatchOutcome? outcome;
   final List<WeaponShots> shotsByWeapon;
 
+  /// valorant-api.com uuid of the map, when the payload carries it.
+  final String? mapId;
+
+  /// Riot's queue id, e.g. `competitive`, lower-cased.
+  final String queueId;
+
+  /// The full scoreboard, rounds and kills, for the match screen.
+  final MatchDetail? detail;
+
+  bool get isCompetitive => queueId == 'competitive';
+
   int get headshots => shotsByWeapon.fold(0, (sum, shots) => sum + shots.headshots);
   int get totalShots => shotsByWeapon.fold(0, (sum, shots) => sum + shots.total);
   double? get headshotPercent => totalShots == 0 ? null : headshots * 100 / totalShots;
   double get killDeathRatio => deaths == 0 ? kills.toDouble() : kills / deaths;
 }
 
-Map<String, dynamic> _asMap(Object? value) =>
-    value is Map<String, dynamic> ? value : const <String, dynamic>{};
-
-List<dynamic> _asList(Object? value) => value is List<dynamic> ? value : const <dynamic>[];
-
-int _asInt(Object? value) => switch (value) {
-  final int number => number,
-  final num number => number.round(),
-  final String text => int.tryParse(text) ?? 0,
-  _ => 0,
-};
-
-/// Maps, agents and queues come either as `{"id": .., "name": ..}` (v4) or as
-/// a bare string (v2).
-String _displayName(Object? value) {
-  if (value is Map<String, dynamic>) return (value['name'] ?? value['mode_type'] ?? '').toString();
-  return value?.toString() ?? '';
-}
-
 Map<String, dynamic> _findPlayer(Map<String, dynamic> json, String puuid) {
   final players = json['players'];
-  final entries = players is Map<String, dynamic> ? _asList(players['all_players']) : _asList(players);
+  final entries = players is Map<String, dynamic> ? asList(players['all_players']) : asList(players);
 
   for (final entry in entries) {
-    final player = _asMap(entry);
+    final player = asMap(entry);
     if (player['puuid'] == puuid) return player;
   }
   return const {};
@@ -133,19 +134,19 @@ DateTime? _startedAt(Map<String, dynamic> metadata) {
 
   final rounds = team['rounds'];
   if (rounds is Map<String, dynamic>) {
-    return (_asInt(rounds['won']), _asInt(rounds['lost']));
+    return (asInt(rounds['won']), asInt(rounds['lost']));
   }
-  return (_asInt(team['rounds_won']), _asInt(team['rounds_lost']));
+  return (asInt(team['rounds_won']), asInt(team['rounds_lost']));
 }
 
 Map<String, dynamic> _findTeam(Map<String, dynamic> json, String? teamId) {
   if (teamId == null) return const {};
   final teams = json['teams'];
 
-  if (teams is Map<String, dynamic>) return _asMap(teams[teamId.toLowerCase()]);
+  if (teams is Map<String, dynamic>) return asMap(teams[teamId.toLowerCase()]);
 
-  for (final entry in _asList(teams)) {
-    final team = _asMap(entry);
+  for (final entry in asList(teams)) {
+    final team = asMap(entry);
     if ((team['team_id'] ?? team['team'])?.toString().toLowerCase() == teamId.toLowerCase()) {
       return team;
     }
@@ -171,10 +172,10 @@ List<WeaponShots> _shotsByWeapon(Map<String, dynamic> json, String puuid, Map<St
   final bodyshots = <String, int>{};
   final legshots = <String, int>{};
 
-  for (final roundEntry in _asList(json['rounds'])) {
-    for (final statEntry in _asList(_asMap(roundEntry)['player_stats'])) {
-      final roundStats = _asMap(statEntry);
-      final statPuuid = (roundStats['puuid'] ?? _asMap(roundStats['player'])['puuid'])?.toString();
+  for (final roundEntry in asList(json['rounds'])) {
+    for (final statEntry in _roundPlayerStats(asMap(roundEntry))) {
+      final roundStats = asMap(statEntry);
+      final statPuuid = (roundStats['puuid'] ?? asMap(roundStats['player'])['puuid'])?.toString();
       if (statPuuid != puuid) continue;
 
       final weapon = _weaponOf(roundStats);
@@ -205,26 +206,26 @@ List<WeaponShots> _shotsByWeapon(Map<String, dynamic> json, String puuid, Map<St
 }
 
 String _weaponOf(Map<String, dynamic> roundStats) {
-  final economy = _asMap(roundStats['economy']);
+  final economy = asMap(roundStats['economy']);
   final weapon = roundStats['weapon'] ?? economy['weapon'];
-  return _displayName(weapon).trim();
+  return displayNameOf(weapon).trim();
 }
 
 /// Head, body and leg shots of one player during one round.
 (int, int, int) _roundShots(Map<String, dynamic> roundStats) {
-  final stats = _asMap(roundStats['stats']);
+  final stats = asMap(roundStats['stats']);
   if (stats.containsKey('headshots')) {
-    return (_asInt(stats['headshots']), _asInt(stats['bodyshots']), _asInt(stats['legshots']));
+    return (asInt(stats['headshots']), asInt(stats['bodyshots']), asInt(stats['legshots']));
   }
 
   var headshots = 0;
   var bodyshots = 0;
   var legshots = 0;
-  for (final eventEntry in _asList(roundStats['damage_events'] ?? roundStats['damage'])) {
-    final event = _asMap(eventEntry);
-    headshots += _asInt(event['headshots']);
-    bodyshots += _asInt(event['bodyshots']);
-    legshots += _asInt(event['legshots']);
+  for (final eventEntry in asList(roundStats['damage_events'] ?? roundStats['damage'])) {
+    final event = asMap(eventEntry);
+    headshots += asInt(event['headshots']);
+    bodyshots += asInt(event['bodyshots']);
+    legshots += asInt(event['legshots']);
   }
   return (headshots, bodyshots, legshots);
 }
@@ -232,10 +233,10 @@ String _weaponOf(Map<String, dynamic> roundStats) {
 /// Fallback when a match carries no round detail: the totals the API reports
 /// for the whole match, which are not split per weapon.
 List<WeaponShots> _matchWideShots(Map<String, dynamic> player) {
-  final stats = _asMap(player['stats']);
-  final headshots = _asInt(stats['headshots']);
-  final bodyshots = _asInt(stats['bodyshots']);
-  final legshots = _asInt(stats['legshots']);
+  final stats = asMap(player['stats']);
+  final headshots = asInt(stats['headshots']);
+  final bodyshots = asInt(stats['bodyshots']);
+  final legshots = asInt(stats['legshots']);
   if (headshots + bodyshots + legshots == 0) return const [];
 
   return [
@@ -246,4 +247,21 @@ List<WeaponShots> _matchWideShots(Map<String, dynamic> player) {
       legshots: legshots,
     ),
   ];
+}
+
+/// v2 listed the players of a round under `player_stats`, v4 under `stats`.
+List<dynamic> _roundPlayerStats(Map<String, dynamic> round) {
+  final legacy = round['player_stats'];
+  if (legacy is List<dynamic>) return legacy;
+  return asList(round['stats']);
+}
+
+/// The match screen is a bonus: a payload it cannot read must never cost the
+/// history line itself.
+MatchDetail? _detailOf(Map<String, dynamic> json, String puuid) {
+  try {
+    return MatchDetail.fromJson(json, puuid: puuid);
+  } on Object {
+    return null;
+  }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mybmw/features/encyclopedia/data/ability_video_repository.dart';
+import 'package:valorant_companion/features/encyclopedia/data/ability_video_repository.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

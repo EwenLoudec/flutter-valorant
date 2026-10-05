@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../encyclopedia/domain/agent.dart';
 import '../../encyclopedia/domain/game_map.dart';
 import '../../encyclopedia/providers/encyclopedia_providers.dart';
+import '../data/lineup_collections_store.dart';
 import '../data/lineup_media_store.dart';
 import '../data/lineup_sources.dart';
 import '../domain/lineup.dart';
+import '../domain/lineup_collections.dart';
 import '../domain/resolved_lineup.dart';
 
 final bundledLineupsSourceProvider = Provider<BundledLineupsSource>((ref) => BundledLineupsSource());
@@ -34,6 +36,14 @@ class LineupsNotifier extends AsyncNotifier<List<Lineup>> {
       lineups[index] = lineup;
     }
 
+    await _commit(lineups);
+  }
+
+  /// Adds imported spots on top of the list.
+  Future<void> addAll(List<Lineup> imported) async {
+    if (imported.isEmpty) return;
+    final ids = {for (final lineup in imported) lineup.id};
+    final lineups = [...imported, for (final lineup in [...?state.value]) if (!ids.contains(lineup.id)) lineup];
     await _commit(lineups);
   }
 
@@ -99,3 +109,29 @@ final agentByNameProvider = Provider.family<Agent?, String>((ref, agentName) {
   }
   return null;
 });
+
+final lineupCollectionsStoreProvider = Provider<LineupCollectionsStore>((ref) => LineupCollectionsStore());
+
+/// Starred spots and the player's named collections.
+class LineupCollectionsNotifier extends AsyncNotifier<LineupCollections> {
+  @override
+  Future<LineupCollections> build() => ref.read(lineupCollectionsStoreProvider).load();
+
+  Future<void> toggleFavorite(String lineupId) => _apply((value) => value.toggleFavorite(lineupId));
+
+  Future<void> create(String name) => _apply((value) => value.create(name));
+
+  Future<void> delete(String name) => _apply((value) => value.delete(name));
+
+  Future<void> toggleIn(String name, String lineupId) => _apply((value) => value.toggleIn(name, lineupId));
+
+  Future<void> _apply(LineupCollections Function(LineupCollections value) change) async {
+    final updated = change(state.value ?? const LineupCollections());
+    state = AsyncData(updated);
+    await ref.read(lineupCollectionsStoreProvider).save(updated);
+  }
+}
+
+final lineupCollectionsProvider = AsyncNotifierProvider<LineupCollectionsNotifier, LineupCollections>(
+  LineupCollectionsNotifier.new,
+);
