@@ -96,6 +96,17 @@ class PlayerMatch {
 
   bool get isCompetitive => queueId == 'competitive';
 
+  /// Queues played without rounds, whose "score" is a kill count.
+  static const _queuesWithoutRounds = {'deathmatch', 'hurm', 'ggteam', 'snowball'};
+
+  /// Whether the game was played in rounds (competitive, unrated, swiftplay…).
+  /// The per agent / map / side figures only make sense for those.
+  bool get isRoundBased {
+    final detail = this.detail;
+    if (detail != null && detail.rounds.isNotEmpty) return detail.isRoundBased;
+    return !_queuesWithoutRounds.contains(queueId);
+  }
+
   int get headshots => shotsByWeapon.fold(0, (sum, shots) => sum + shots.headshots);
   int get totalShots => shotsByWeapon.fold(0, (sum, shots) => sum + shots.total);
   double? get headshotPercent => totalShots == 0 ? null : headshots * 100 / totalShots;

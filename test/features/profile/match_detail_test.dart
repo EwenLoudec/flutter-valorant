@@ -82,6 +82,40 @@ void main() {
       expect(deathmatch.buyOf('Blue', 0), isNull);
     });
 
+    test('recognises the short spellings of the round endings', () {
+      MatchRound round(String result) => MatchRound.fromJson({'result': result}, 0, const {});
+
+      expect(round('Defuse').end, RoundEnd.defused);
+      expect(round('Bomb defused').resultLabel, 'Spike désamorcé');
+      expect(round('Detonate').end, RoundEnd.detonated);
+      expect(round('Round timer expired').end, RoundEnd.timeExpired);
+      expect(round('Surrendered').end, RoundEnd.surrendered);
+      expect(round('Elimination').resultLabel, 'Élimination');
+      expect(round('Mystère').resultLabel, 'Mystère');
+      expect(round('').resultLabel, '—');
+    });
+
+    test('treats a deathmatch as a free-for-all without rounds', () {
+      final deathmatch = MatchDetail.fromJson({
+        'metadata': {
+          'queue': {'id': 'deathmatch', 'name': 'Deathmatch'},
+        },
+        'players': [
+          for (final id in ['me', 'a', 'b', 'c'])
+            {'puuid': id, 'team_id': id, 'stats': {'score': id == 'me' ? 4000 : 1000, 'kills': 10}},
+        ],
+        'rounds': [
+          {'winning_team': 'me', 'result': 'Elimination', 'stats': []},
+        ],
+      }, puuid: 'me');
+
+      expect(deathmatch.isFreeForAll, isTrue);
+      expect(deathmatch.isRoundBased, isFalse);
+      expect(deathmatch.playersByScore.first.puuid, 'me');
+      expect(detail.isFreeForAll, isFalse);
+      expect(detail.isRoundBased, isTrue);
+    });
+
     test('survives an empty payload', () {
       final empty = MatchDetail.fromJson(const {}, puuid: _puuid);
       expect(empty.players, isEmpty);

@@ -33,7 +33,10 @@ class SessionSection extends ConsumerWidget {
             data: (summary) {
               final session = summary.session;
               if (session == null) {
-                return const ProfileMessage(text: 'Aucune partie récente.', icon: Icons.timelapse);
+                return const ProfileMessage(
+                  text: 'Aucune partie à manches récente (les combats à mort ne comptent pas).',
+                  icon: Icons.timelapse,
+                );
               }
               return _SessionCard(session: session, streak: summary.streak);
             },
@@ -141,7 +144,7 @@ class PlayerStatsSection extends ConsumerWidget {
     final iconsByAgent = {for (final agent in agents) agent.displayName.toLowerCase(): agent.displayIcon};
 
     return ProfileSection(
-      title: 'Statistiques · $matchHistorySize dernières parties',
+      title: 'Statistiques',
       child: ref
           .watch(playerStatsSummaryProvider(query))
           .when(
@@ -149,13 +152,24 @@ class PlayerStatsSection extends ConsumerWidget {
             error: (error, _) => ProfileMessage(text: profileErrorText(error), icon: Icons.insights),
             data: (summary) {
               if (summary.isEmpty) {
-                return const ProfileMessage(text: 'Aucune partie à analyser.', icon: Icons.insights);
+                return const ProfileMessage(
+                  text: 'Aucune partie à manches parmi les dernières : les combats à mort ne sont pas comptés.',
+                  icon: Icons.insights,
+                );
               }
 
               final bestAndWorst = summary.bestAndWorstMaps();
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Text(
+                      'Sur ${summary.matchCount} partie${summary.matchCount > 1 ? 's' : ''} à manches '
+                      '— les combats à mort ne sont pas comptés.',
+                      style: const TextStyle(fontSize: 11, color: AppTheme.valorantMuted),
+                    ),
+                  ),
                   ProfileCard(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

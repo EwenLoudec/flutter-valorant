@@ -128,6 +128,36 @@ void main() {
     });
   });
 
+  test('leaves deathmatch-like games out of the figures', () {
+    final deathmatch = PlayerMatch(
+      matchId: 'dm',
+      mapName: 'Haven',
+      mode: 'Deathmatch',
+      startedAt: now,
+      agentName: 'Jett',
+      kills: 40,
+      deaths: 10,
+      assists: 0,
+      score: 9000,
+      roundsWon: 40,
+      roundsLost: 0,
+      outcome: MatchOutcome.win,
+      shotsByWeapon: const [],
+      queueId: 'deathmatch',
+    );
+    final summary = PlayerStatsSummary.from([
+      deathmatch,
+      _match(id: 'c', at: now.subtract(const Duration(minutes: 30)), outcome: MatchOutcome.loss),
+    ]);
+
+    expect(summary.matchCount, 1);
+    expect(summary.maps.map((map) => map.mapName), ['Ascent']);
+    expect(summary.agents.single.games, 1);
+    expect(summary.streak?.outcome, MatchOutcome.loss);
+    expect(summary.session?.matches.single.matchId, 'c');
+    expect(PlayerStatsSummary.from([deathmatch]).isEmpty, isTrue);
+  });
+
   group('RankHistoryEntry', () {
     test('reads the v2 history, most recent first, dropping entries without elo', () {
       final entries = RankHistoryEntry.listFromJson({

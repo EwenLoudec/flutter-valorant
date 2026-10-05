@@ -180,7 +180,7 @@ Saisissez votre Riot ID (`Pseudo#TAG`) et votre région pour afficher :
   événements, passes de combat) avec chaque récompense nommée ; et un **lecteur de code de
   réticule** qui dessine le réticule, le copie et garde tes favoris.
 
-Le Riot ID, la région et la clé API sont mémorisés localement — un tirer-pour-rafraîchir met tout à jour.
+Le Riot ID et la région sont mémorisés localement — un tirer-pour-rafraîchir met tout à jour. La clé HenrikDev vient de la configuration du projet (voir plus bas) : rien à saisir.
 
 ---
 
@@ -205,16 +205,25 @@ Les statistiques de joueur et le classement passent par l'API communautaire **He
 qui demande une clé gratuite. Le tableau de bord se connecte avec un compte Discord :
 rejoindre le [serveur Discord HenrikDev](https://discord.gg/X3GaVkX2YN), se connecter sur le
 [tableau de bord](https://api.henrikdev.xyz/dashboard/) avec ce compte, ouvrir « API Keys »,
-puis « Generate New Key ». Deux façons de fournir la clé :
+puis « Generate New Key ».
 
-1. **Dans l'app** : onglet PROFIL → champ « Clé API HenrikDev », ou directement sur l'écran
-   du classement (onglet RANGS → CLASSEMENT). Elle est stockée sur l'appareil
-   (`shared_preferences`) et n'est jamais envoyée ailleurs qu'à HenrikDev.
-2. **À la compilation**, pour ne pas la ressaisir :
+La clé fait partie de la configuration du projet, pas de l'app : le joueur ne saisit que son
+Riot ID. Elle se range dans `henrik.local.json`, à la racine — un fichier **ignoré par Git**
+(`*.local.json`), pour qu'elle ne parte jamais sur le dépôt public :
+
+```json
+{ "HENRIK_API_KEY": "HDEV-xxxxxxxx" }
+```
+
+puis l'app se lance avec :
 
 ```bash
-flutter run --dart-define=HENRIK_API_KEY=HDEV-xxxxxxxx
+flutter run --dart-define-from-file=henrik.local.json
 ```
+
+La configuration d'aperçu `.claude/launch.json` le fait déjà. Sans ce fichier, le profil et le
+classement affichent un avertissement au lieu de se charger. Attention : une version **web**
+compilée avec la clé la contient en clair dans son JavaScript — à ne pas publier telle quelle.
 
 ---
 

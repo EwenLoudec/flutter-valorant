@@ -28,13 +28,6 @@ class HenrikApiClient {
 
   static const _baseUrl = 'https://api.henrikdev.xyz/valorant';
 
-  /// Where a free key is generated: dashboard, then « API Keys », then
-  /// « Generate New Key ».
-  static final dashboardUri = Uri.parse('https://api.henrikdev.xyz/dashboard/');
-
-  /// The dashboard signs in with Discord, through the HenrikDev server.
-  static final discordUri = Uri.parse('https://discord.gg/X3GaVkX2YN');
-
   final http.Client _httpClient;
 
   Future<Map<String, dynamic>> getObject(

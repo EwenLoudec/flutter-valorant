@@ -104,6 +104,7 @@ class Streak {
 /// costs a request.
 class PlayerStatsSummary {
   const PlayerStatsSummary({
+    required this.matchCount,
     required this.overall,
     required this.agents,
     required this.maps,
@@ -115,8 +116,10 @@ class PlayerStatsSummary {
   /// Two games further apart than this belong to different sessions.
   static const sessionGap = Duration(hours: 3);
 
+  /// Deathmatch-like games are left out: their kill counts read as rounds,
+  /// and their "wins" would inflate every win rate.
   factory PlayerStatsSummary.from(List<PlayerMatch> matches, {List<RankHistoryEntry> rankHistory = const []}) {
-    final sorted = [...matches]
+    final sorted = [...matches.where((match) => match.isRoundBased)]
       ..sort((a, b) {
         final aDate = a.startedAt;
         final bDate = b.startedAt;
@@ -186,6 +189,7 @@ class PlayerStatsSummary {
       });
 
     return PlayerStatsSummary(
+      matchCount: sorted.length,
       overall: overall,
       agents: agentList,
       maps: mapList,
@@ -195,6 +199,8 @@ class PlayerStatsSummary {
     );
   }
 
+  /// How many round-based games the figures come from.
+  final int matchCount;
   final WinRecord overall;
   final List<AgentStats> agents;
   final List<MapStats> maps;

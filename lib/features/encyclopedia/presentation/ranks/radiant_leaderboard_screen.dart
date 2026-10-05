@@ -7,8 +7,7 @@ import '../../../../core/widgets/fade_in_network_image.dart';
 import '../../../../core/widgets/valorant_input.dart';
 import '../../../profile/domain/leaderboard.dart';
 import '../../../profile/domain/player_query.dart';
-import '../../../profile/domain/player_settings.dart';
-import '../../../profile/presentation/henrik_key_help.dart';
+import '../../../profile/presentation/missing_api_key_notice.dart';
 import '../../../profile/presentation/profile_error.dart';
 import '../../../profile/providers/profile_providers.dart';
 import '../../domain/rank_tier.dart';
@@ -219,70 +218,16 @@ class _PlayerRow extends StatelessWidget {
   }
 }
 
-/// The key can be pasted right here: the classement is the first thing many
-/// players want to see, before linking their own account.
-class _MissingKey extends ConsumerStatefulWidget {
+class _MissingKey extends StatelessWidget {
   const _MissingKey();
 
   @override
-  ConsumerState<_MissingKey> createState() => _MissingKeyState();
-}
-
-class _MissingKeyState extends ConsumerState<_MissingKey> {
-  final _controller = TextEditingController();
-  String? _error;
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  Future<void> _save() async {
-    final apiKey = _controller.text.trim();
-    if (apiKey.isEmpty) {
-      setState(() => _error = 'Colle ta clé HenrikDev (elle commence par HDEV-).');
-      return;
-    }
-    final settings = ref.read(playerSettingsProvider).value ?? const PlayerSettings();
-    await ref.read(playerSettingsProvider.notifier).save(settings.copyWith(apiKey: apiKey));
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 28, 20, 24),
-      children: [
-        const Icon(Icons.key_outlined, size: 44, color: Colors.white24),
-        const SizedBox(height: 14),
-        const Text(
-          'UNE CLÉ API EST NÉCESSAIRE',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: 0.6),
-        ),
-        const SizedBox(height: 18),
-        const ValorantFieldLabel('Clé API HenrikDev'),
-        TextField(
-          controller: _controller,
-          obscureText: true,
-          autocorrect: false,
-          decoration: valorantInputDecoration(hint: 'HDEV-…', errorText: _error),
-          onSubmitted: (_) => _save(),
-        ),
-        const SizedBox(height: 6),
-        const HenrikKeyHelp(),
-        const SizedBox(height: 10),
-        FilledButton(
-          onPressed: _save,
-          style: FilledButton.styleFrom(
-            backgroundColor: AppTheme.valorantRed,
-            foregroundColor: Colors.white,
-            shape: const RoundedRectangleBorder(),
-            padding: const EdgeInsets.symmetric(vertical: 14),
-          ),
-          child: const Text('AFFICHER LE CLASSEMENT', style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: 0.6)),
-        ),
-      ],
+    return const Center(
+      child: Padding(
+        padding: EdgeInsets.all(20),
+        child: MissingApiKeyNotice(),
+      ),
     );
   }
 }

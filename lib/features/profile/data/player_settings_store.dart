@@ -14,11 +14,16 @@ class PlayerSettingsStore {
   Future<PlayerSettings> load() async {
     final preferences = await SharedPreferences.getInstance();
     final storedRiotId = preferences.getString(_riotIdKey);
+    final storedApiKey = preferences.getString(_apiKeyKey)?.trim();
 
     return PlayerSettings(
       riotId: storedRiotId == null ? null : RiotId.tryParse(storedRiotId),
       region: ValorantRegion.fromCode(preferences.getString(_regionKey)),
-      apiKey: preferences.getString(_apiKeyKey) ?? PlayerSettings.defaultApiKey,
+      // The key built into the app wins: the player never types one any more,
+      // and a key saved by an older version must not shadow it.
+      apiKey: PlayerSettings.defaultApiKey.isNotEmpty || storedApiKey == null || storedApiKey.isEmpty
+          ? PlayerSettings.defaultApiKey
+          : storedApiKey,
     );
   }
 
