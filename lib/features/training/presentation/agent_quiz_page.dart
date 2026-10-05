@@ -46,7 +46,8 @@ class AgentQuizPage extends ConsumerWidget {
               'Dix questions tirées au hasard : reconnaître un agent à son portrait, nommer '
               'une compétence sur son icône, retrouver son propriétaire, l\'identifier depuis '
               'sa description officielle… et surtout la reconnaître à l\'oreille — on te passe '
-              'le son du jeu, tu dis à qui il appartient, puis de quelle capacité il s\'agit.',
+              'un nouveau son du jeu à chaque question : à qui il appartient, ou de quelle '
+              'capacité il s\'agit.',
               style: TextStyle(fontSize: 12.5, color: AppTheme.valorantMuted, height: 1.45),
             ),
           ),

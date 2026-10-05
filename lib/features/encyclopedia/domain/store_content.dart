@@ -1,3 +1,5 @@
+import '../../../core/text/search_text.dart';
+
 /// A store bundle: the themed collection of skins sold together.
 class Bundle {
   const Bundle({
@@ -24,10 +26,7 @@ class Bundle {
   final String? displayIcon;
   final String? verticalPromoImage;
 
-  bool matches(String search) {
-    final query = search.trim().toLowerCase();
-    return query.isEmpty || displayName.toLowerCase().contains(query);
-  }
+  bool matches(String search) => matchesSearch(search, [displayName]);
 }
 
 /// A way of playing: Standard, Spike Rush, Deathmatch…

@@ -12,9 +12,12 @@ bool get _isSoundSupported => kIsWeb || _supportedPlatforms.contains(defaultTarg
 /// Plays an official ability clip **without its picture** — the point of the
 /// question is to recognise the sound alone.
 class AbilitySoundPlayer extends StatefulWidget {
-  const AbilitySoundPlayer({super.key, required this.url});
+  const AbilitySoundPlayer({super.key, required this.url, this.autoplay = true});
 
   final String url;
+
+  /// Starts the clip as soon as it is loaded; the button replays it.
+  final bool autoplay;
 
   @override
   State<AbilitySoundPlayer> createState() => _AbilitySoundPlayerState();
@@ -34,23 +37,57 @@ class _AbilitySoundPlayerState extends State<AbilitySoundPlayer> {
   Future<void> _load() async {
     final controller = VideoPlayerController.networkUrl(Uri.parse(widget.url));
     _controller = controller;
+    // Follows the clip, so the button goes back to "listen" once it ends.
+    controller.addListener(_onPlayerChanged);
 
     try {
       await controller.initialize();
       await controller.setVolume(1);
-      if (mounted) setState(() => _isReady = true);
+      if (!mounted || !identical(_controller, controller)) return;
+      setState(() => _isReady = true);
     } on Object {
-      if (mounted) setState(() => _hasFailed = true);
+      if (mounted && identical(_controller, controller)) setState(() => _hasFailed = true);
+      return;
     }
+    if (widget.autoplay) await _play();
+  }
+
+  bool _wasPlaying = false;
+
+  void _onPlayerChanged() {
+    final isPlaying = _controller?.value.isPlaying ?? false;
+    if (isPlaying == _wasPlaying || !mounted) return;
+    setState(() => _wasPlaying = isPlaying);
+  }
+
+  void _reload() {
+    _disposeController();
+    setState(() {
+      _isReady = false;
+      _hasFailed = false;
+    });
+    _load();
+  }
+
+  void _disposeController() {
+    _controller?.removeListener(_onPlayerChanged);
+    _controller?.dispose();
+    _controller = null;
+    _wasPlaying = false;
   }
 
   Future<void> _play() async {
     final controller = _controller;
     if (controller == null) return;
 
-    await controller.seekTo(Duration.zero);
-    await controller.play();
-    if (mounted) setState(() {});
+    // A browser may refuse to start a sound on its own: the button is still
+    // there to play it by hand.
+    try {
+      await controller.seekTo(Duration.zero);
+      await controller.play();
+    } on Object {
+      // Nothing to do: the clip stays ready to play.
+    }
   }
 
   @override
@@ -58,8 +95,7 @@ class _AbilitySoundPlayerState extends State<AbilitySoundPlayer> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.url == widget.url) return;
 
-    _controller?.dispose();
-    _controller = null;
+    _disposeController();
     _isReady = false;
     _hasFailed = false;
     if (_isSoundSupported) _load();
@@ -67,7 +103,7 @@ class _AbilitySoundPlayerState extends State<AbilitySoundPlayer> {
 
   @override
   void dispose() {
-    _controller?.dispose();
+    _disposeController();
     super.dispose();
   }
 
@@ -77,10 +113,10 @@ class _AbilitySoundPlayerState extends State<AbilitySoundPlayer> {
       return const _SoundNotice(message: 'Le son n\'est pas lisible sur cette plateforme — essaie sur mobile, macOS ou le web.');
     }
     if (_hasFailed) {
-      return const _SoundNotice(message: 'Le clip n\'a pas pu être chargé. Réponds au jugé ou passe la question.');
+      return _SoundNotice(message: 'Le clip n\'a pas pu être chargé. Réessaie, ou réponds au jugé.', onRetry: _reload);
     }
 
-    final isPlaying = _controller?.value.isPlaying ?? false;
+    final isPlaying = _wasPlaying;
 
     return Column(
       children: [
@@ -126,9 +162,10 @@ class _AbilitySoundPlayerState extends State<AbilitySoundPlayer> {
 }
 
 class _SoundNotice extends StatelessWidget {
-  const _SoundNotice({required this.message});
+  const _SoundNotice({required this.message, this.onRetry});
 
   final String message;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -148,6 +185,12 @@ class _SoundNotice extends StatelessWidget {
               style: const TextStyle(fontSize: 11.5, color: AppTheme.valorantMuted, height: 1.4),
             ),
           ),
+          if (onRetry != null)
+            TextButton(
+              onPressed: onRetry,
+              style: TextButton.styleFrom(foregroundColor: AppTheme.valorantRed),
+              child: const Text('RÉESSAYER', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800)),
+            ),
         ],
       ),
     );

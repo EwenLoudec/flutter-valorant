@@ -1,11 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/henrik_api_client.dart';
+import '../../encyclopedia/domain/agent.dart';
+import '../../encyclopedia/domain/competitive_season.dart';
 import '../../encyclopedia/domain/cosmetic.dart';
+import '../../encyclopedia/providers/encyclopedia_providers.dart';
 import '../data/cosmetic_collection_store.dart';
 import '../data/henrik_player_repository.dart';
 import '../data/player_repository.dart';
 import '../data/player_settings_store.dart';
+import '../domain/career_overview.dart';
+import '../domain/featured_store.dart';
 import '../domain/leaderboard.dart';
 import '../domain/owned_skin.dart';
 import '../domain/player_account.dart';
@@ -15,6 +20,7 @@ import '../domain/player_rank.dart';
 import '../domain/player_settings.dart';
 import '../domain/player_stats_summary.dart';
 import '../domain/rank_history.dart';
+import '../domain/stored_match.dart';
 import '../domain/weapon_accuracy.dart';
 
 /// How many recent matches the profile pulls in one go. The API returns the
@@ -78,11 +84,7 @@ final playerRankProvider = FutureProvider.family<PlayerRank, PlayerQuery>((ref, 
 
 final playerMatchesProvider = FutureProvider.family<List<PlayerMatch>, PlayerQuery>((ref, query) async {
   final account = await ref.watch(playerAccountProvider(query).future);
-  return ref.watch(playerRepositoryProvider).getMatches(
-    query,
-    puuid: account.puuid,
-    size: matchHistorySize,
-  );
+  return ref.watch(playerRepositoryProvider).getMatches(query, puuid: account.puuid, size: matchHistorySize);
 }, retry: _retryTransientFailures);
 
 /// Derived from the very same match payload, so it costs no extra request.
@@ -111,10 +113,49 @@ final playerStatsSummaryProvider = FutureProvider.family<PlayerStatsSummary, Pla
   return PlayerStatsSummary.from(matches, rankHistory: rankHistory);
 }, retry: _retryTransientFailures);
 
+/// The tracker-style overview: headline figures, roles, weapons, agents.
+/// The agent catalogue only names the roles, so its failure costs the role
+/// breakdown and nothing else.
+final careerOverviewProvider = FutureProvider.family<CareerOverview, PlayerQuery>((ref, query) async {
+  final account = await ref.watch(playerAccountProvider(query).future);
+  final matches = await ref.watch(playerMatchesProvider(query).future);
+
+  var agents = const <Agent>[];
+  try {
+    agents = await ref.watch(agentsProvider.future);
+  } on Object {
+    // Keep the overview without roles.
+  }
+  return CareerOverview.from(
+    matches,
+    puuid: account.puuid,
+    roleOfAgent: {for (final agent in agents) agent.displayName.toLowerCase(): agent.roleName},
+  );
+}, retry: _retryTransientFailures);
+
 /// The top of one region's ranked ladder, keyed by region code.
 final leaderboardProvider = FutureProvider.family<Leaderboard, String>((ref, regionCode) {
   return ref.watch(playerRepositoryProvider).getLeaderboard(ValorantRegion.fromCode(regionCode));
 }, retry: _retryTransientFailures);
+
+/// The featured bundles of the store. Riot only shows a player's own daily
+/// offers to that player's client, so this is the one store every profile
+/// can show.
+final featuredStoreProvider = FutureProvider<List<FeaturedBundle>>((ref) {
+  return ref.watch(playerRepositoryProvider).getFeaturedStore();
+}, retry: _retryTransientFailures);
+
+/// The text of the title the account wears, once the title catalogue knows
+/// its uuid. null while unknown: a uuid is never shown.
+final equippedTitleProvider = Provider.family<String?, PlayerQuery>((ref, query) {
+  final uuid = ref.watch(playerAccountProvider(query)).value?.title;
+  if (uuid == null) return null;
+  final titles = ref.watch(cosmeticsProvider(CosmeticKind.title)).value ?? const <Cosmetic>[];
+  for (final title in titles) {
+    if (title.uuid == uuid) return title.titleText;
+  }
+  return null;
+});
 
 /// Riot exposes no public endpoint for an account's owned skins, so the
 /// collection is curated by the user and kept on the device.
@@ -136,9 +177,7 @@ class OwnedSkinsNotifier extends AsyncNotifier<List<OwnedSkin>> {
   }
 }
 
-final ownedSkinsProvider = AsyncNotifierProvider<OwnedSkinsNotifier, List<OwnedSkin>>(
-  OwnedSkinsNotifier.new,
-);
+final ownedSkinsProvider = AsyncNotifierProvider<OwnedSkinsNotifier, List<OwnedSkin>>(OwnedSkinsNotifier.new);
 
 /// The uuids of the owned skins, for quick membership checks in the picker.
 final ownedSkinUuidsProvider = Provider<Set<String>>((ref) {
@@ -168,3 +207,23 @@ class OwnedCosmeticsNotifier extends AsyncNotifier<Map<CosmeticKind, Set<String>
 final ownedCosmeticsProvider = AsyncNotifierProvider<OwnedCosmeticsNotifier, Map<CosmeticKind, Set<String>>>(
   OwnedCosmeticsNotifier.new,
 );
+
+/// The light history of the competitive games, which reaches back a whole
+/// act, unlike the detailed recent matches.
+final storedMatchesProvider = FutureProvider.family<List<StoredMatch>, PlayerQuery>((ref, query) {
+  return ref.watch(playerRepositoryProvider).getStoredMatches(query);
+}, retry: _retryTransientFailures);
+
+/// The current act's competitive figures. Without the season catalogue, the
+/// act of the latest game stands for the current one.
+final seasonStatsProvider = FutureProvider.family<SeasonStats, PlayerQuery>((ref, query) async {
+  final matches = await ref.watch(storedMatchesProvider(query).future);
+
+  CompetitiveSeason? season;
+  try {
+    season = await ref.watch(currentSeasonProvider.future);
+  } on Object {
+    // Fall back on the latest game's act.
+  }
+  return SeasonStats.from(matches, seasonId: season?.actUuid);
+}, retry: _retryTransientFailures);

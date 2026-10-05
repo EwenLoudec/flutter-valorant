@@ -24,12 +24,16 @@ class DamageRange {
   final double legDamage;
 }
 
-/// A skin reduced to what a quiz question shows: its name and picture.
+/// A paid skin reduced to what a quiz question and the price list show.
 class WeaponSkinPreview {
-  const WeaponSkinPreview({required this.displayName, required this.displayIcon});
+  const WeaponSkinPreview({required this.displayName, required this.displayIcon, this.uuid, this.contentTierUuid});
 
   final String displayName;
   final String displayIcon;
+  final String? uuid;
+
+  /// The edition (Select, Deluxe…), which sets the price.
+  final String? contentTierUuid;
 }
 
 class Weapon {
@@ -65,11 +69,29 @@ class Weapon {
         for (final skin in json['skins'] as List<dynamic>? ?? const [])
           if (skin is Map<String, dynamic> &&
               skin['contentTierUuid'] != null &&
-              skin['displayIcon'] is String &&
+              _skinIcon(skin) != null &&
               skin['displayName'] is String)
-            WeaponSkinPreview(displayName: skin['displayName'] as String, displayIcon: skin['displayIcon'] as String),
+            WeaponSkinPreview(
+              displayName: skin['displayName'] as String,
+              displayIcon: _skinIcon(skin)!,
+              uuid: skin['uuid'] as String?,
+              contentTierUuid: skin['contentTierUuid'] as String?,
+            ),
       ],
     );
+  }
+
+  /// The skin's picture; a few skins only have one on their first level or
+  /// variant.
+  static String? _skinIcon(Map<String, dynamic> skin) {
+    String? first(Object? list, String field) {
+      if (list is! List<dynamic> || list.isEmpty) return null;
+      final entry = list.first;
+      return entry is Map<String, dynamic> && entry[field] is String ? entry[field] as String : null;
+    }
+
+    final icon = skin['displayIcon'];
+    return icon is String ? icon : first(skin['levels'], 'displayIcon') ?? first(skin['chromas'], 'fullRender');
   }
 
   final String uuid;

@@ -245,7 +245,8 @@ class _QuestionCard extends StatelessWidget {
                   : FadeInNetworkImage(url: imageUrl, fit: BoxFit.contain),
             ),
           ),
-        if (soundUrl != null) AbilitySoundPlayer(key: ValueKey(soundUrl), url: soundUrl),
+        // One player per question, so every question starts its own clip.
+        if (soundUrl != null) AbilitySoundPlayer(key: ObjectKey(question), url: soundUrl),
         if (text != null)
           ClipPath(
             clipper: const DiagonalCutClipper(cut: 10),

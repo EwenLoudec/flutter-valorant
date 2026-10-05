@@ -5,8 +5,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valorant_companion/core/theme/app_theme.dart';
 import 'package:valorant_companion/features/encyclopedia/domain/agent.dart';
 import 'package:valorant_companion/features/encyclopedia/domain/competitive_season.dart';
+import 'package:valorant_companion/features/encyclopedia/domain/cosmetic.dart';
 import 'package:valorant_companion/features/encyclopedia/domain/game_map.dart';
 import 'package:valorant_companion/features/encyclopedia/domain/rank_tier.dart';
+import 'package:valorant_companion/features/encyclopedia/domain/store_content.dart';
 import 'package:valorant_companion/features/encyclopedia/domain/weapon.dart';
 import 'package:valorant_companion/features/encyclopedia/presentation/agents/agents_page.dart';
 import 'package:valorant_companion/features/encyclopedia/presentation/maps/maps_page.dart';
@@ -15,12 +17,14 @@ import 'package:valorant_companion/features/encyclopedia/presentation/weapons/we
 import 'package:valorant_companion/features/encyclopedia/providers/encyclopedia_providers.dart';
 import 'package:valorant_companion/features/lineups/presentation/lineups_page.dart';
 import 'package:valorant_companion/features/profile/data/player_repository.dart';
+import 'package:valorant_companion/features/profile/domain/featured_store.dart';
 import 'package:valorant_companion/features/profile/domain/leaderboard.dart';
 import 'package:valorant_companion/features/profile/domain/player_account.dart';
 import 'package:valorant_companion/features/profile/domain/player_match.dart';
 import 'package:valorant_companion/features/profile/domain/player_query.dart';
 import 'package:valorant_companion/features/profile/domain/player_rank.dart';
 import 'package:valorant_companion/features/profile/domain/rank_history.dart';
+import 'package:valorant_companion/features/profile/domain/stored_match.dart';
 import 'package:valorant_companion/features/profile/presentation/match_detail_screen.dart';
 import 'package:valorant_companion/features/profile/presentation/match_history_section.dart';
 import 'package:valorant_companion/features/profile/presentation/profile_page.dart';
@@ -55,6 +59,13 @@ class _FakeRepository implements PlayerRepository {
 
   @override
   Future<Leaderboard> getLeaderboard(ValorantRegion region, {int size = 200}) async => Leaderboard.fromJson(const {});
+
+  @override
+  Future<List<FeaturedBundle>> getFeaturedStore() async => FeaturedBundle.listFromJson(featuredStoreFixture());
+
+  @override
+  Future<List<StoredMatch>> getStoredMatches(PlayerQuery query, {int size = 200}) async =>
+      StoredMatch.listFromJson(storedMatchesFixture());
 }
 
 Agent _agent(String name, String role) => Agent(
@@ -103,7 +114,10 @@ final _overrides = [
     ],
   ),
   weaponsProvider.overrideWith(
-    (ref) async => [for (final (index, name) in ['Classic', 'Sheriff', 'Spectre', 'Vandal', 'Phantom'].indexed) _weapon(name, index * 700)],
+    (ref) async => [
+      for (final (index, name) in ['Classic', 'Sheriff', 'Spectre', 'Vandal', 'Phantom'].indexed)
+        _weapon(name, index * 700),
+    ],
   ),
   mapsProvider.overrideWith(
     (ref) async => const [
@@ -136,6 +150,23 @@ final _overrides = [
   ),
   currentSeasonProvider.overrideWith((ref) async => const CompetitiveSeason(episodeName: 'V26', actName: 'ACTE V')),
   abilitySoundsProvider.overrideWith((ref) async => const <String, Map<String, String>>{}),
+  bundlesProvider.overrideWith(
+    (ref) async => const [
+      Bundle(
+        uuid: 'bundle-1',
+        displayName: 'Champions 2026',
+        subtitle: null,
+        displayIcon: null,
+        verticalPromoImage: null,
+      ),
+    ],
+  ),
+  cosmeticsProvider.overrideWith(
+    (ref, kind) async => [
+      if (kind == CosmeticKind.card)
+        const Cosmetic(uuid: 'card-1', kind: CosmeticKind.card, displayName: 'Carte dragon', imageUrl: null),
+    ],
+  ),
   abilityVideosProvider.overrideWith((ref) async => const <String, Map<String, String>>{}),
 ];
 
@@ -147,7 +178,13 @@ Future<void> _pump(WidgetTester tester, Widget child) async {
   await tester.pumpWidget(
     ProviderScope(
       overrides: _overrides,
-      child: MaterialApp(theme: AppTheme.theme, home: child),
+      child: MaterialApp(
+        theme: AppTheme.theme,
+        // Reduced motion: the profile's fire would never let the test settle.
+        builder: (context, child) =>
+            MediaQuery(data: MediaQuery.of(context).copyWith(disableAnimations: true), child: child!),
+        home: child,
+      ),
     ),
   );
   await tester.pumpAndSettle();
@@ -163,6 +200,7 @@ void main() {
     await _pump(tester, const WeaponsPage());
     expect(find.text('ÉCONOMIE'), findsOneWidget);
     expect(find.text('QUIZ ARMES'), findsOneWidget);
+    expect(find.text('PRIX'), findsOneWidget);
 
     await _pump(tester, const MapsPage());
     expect(find.text('COMPOSITION'), findsOneWidget);
@@ -231,13 +269,70 @@ void main() {
     });
     await _pump(tester, const ProfilePage());
 
-    for (final title in ['RANG COMPÉTITIF', 'ÉVOLUTION DU RR', 'DERNIÈRE SESSION', 'HISTORIQUE', 'COLLECTION ET OUTILS']) {
-      await tester.scrollUntilVisible(find.text(title), 300);
-      expect(find.text(title), findsOneWidget);
+    expect(find.text('RANG ACTUEL'), findsOneWidget);
+    expect(find.textContaining('Moi', findRichText: true), findsWidgets);
+    final page = find
+        .byWidgetPredicate((widget) => widget is Scrollable && widget.axisDirection == AxisDirection.down)
+        .first;
+
+    Future<void> expectTitles(List<String> titles) async {
+      for (final title in titles) {
+        await tester.scrollUntilVisible(find.text(title), 300, scrollable: page);
+        expect(find.text(title), findsOneWidget);
+      }
     }
 
+    Future<void> openTab(String label) async {
+      // The tabs stay pinned on top; the row only needs sliding sideways.
+      await tester.ensureVisible(find.text(label));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(label));
+      await tester.pumpAndSettle();
+    }
+
+    await expectTitles([
+      'SAISON COMPÉTITIVE',
+      'ÉVOLUTION DU RR',
+      'PERFORMANCES',
+      'DERNIÈRE SESSION',
+      'MEILLEURES ARMES',
+      'AGENTS · SAISON COMPÉTITIVE',
+    ]);
+    // The act counts its 4 games, not the previous act's one.
+    expect(find.textContaining('4 parties · 90 manches'), findsOneWidget);
+    expect(find.text('ACTE EN COURS · COMPÉTITIF'), findsOneWidget);
+    expect(find.text('HISTORIQUE'), findsNothing);
+    expect(find.text('MES SKINS (0)'), findsNothing);
+
+    // "See all" opens the full list in its own tab.
+    await tester.ensureVisible(find.text('TOUT VOIR').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('TOUT VOIR').first);
+    await tester.pumpAndSettle();
+    expect(find.text('DERNIÈRE SESSION'), findsNothing);
+    await expectTitles(['MEILLEURES ARMES']);
+
+    await openTab('CARTES');
+    await expectTitles(['CARTES · SAISON COMPÉTITIVE', 'CARTES · DERNIÈRES PARTIES, TOUS MODES']);
+    expect(find.textContaining('1 V · 1 D · K/D'), findsOneWidget);
+
+    await openTab('AGENTS');
+    await expectTitles(['AGENTS · SAISON COMPÉTITIVE', 'AGENTS · DERNIÈRES PARTIES, TOUS MODES']);
+
+    await openTab('BOUTIQUE');
+    await expectTitles(['BOUTIQUE EN VEDETTE', 'CHAMPIONS 2026']);
+    expect(find.textContaining('ENCORE '), findsOneWidget);
+    expect(find.text('−1585 VP'), findsOneWidget);
+    expect(find.text('Champions Phantom'), findsOneWidget);
+    expect(find.text('Carte dragon'), findsOneWidget);
+    expect(find.text('PORTE-BONHEUR ×2'), findsOneWidget);
+
+    await openTab('COLLECTION');
+    await expectTitles(['MES SKINS (0)', 'COLLECTION ET OUTILS']);
+
+    await openTab('PARTIES');
     final matchTile = find.descendant(of: find.byType(MatchHistorySection), matching: find.text('ASCENT'));
-    await tester.scrollUntilVisible(matchTile, -300);
+    await tester.scrollUntilVisible(matchTile, 300, scrollable: page);
     await tester.tap(matchTile);
     await tester.pumpAndSettle();
     expect(find.byType(MatchDetailScreen), findsOneWidget);

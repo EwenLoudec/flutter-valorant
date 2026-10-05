@@ -20,14 +20,7 @@ class EncyclopediaHomeScreen extends StatefulWidget {
 class _EncyclopediaHomeScreenState extends State<EncyclopediaHomeScreen> {
   int _index = 0;
 
-  static const _pages = [
-    AgentsPage(),
-    WeaponsPage(),
-    MapsPage(),
-    LineupsPage(),
-    RanksPage(),
-    ProfilePage(),
-  ];
+  static const _pages = [AgentsPage(), WeaponsPage(), MapsPage(), LineupsPage(), RanksPage(), ProfilePage()];
 
   static const _items = [
     ValorantNavItem(label: 'AGENTS', icon: Icons.groups_rounded),
@@ -41,7 +34,12 @@ class _EncyclopediaHomeScreenState extends State<EncyclopediaHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _index, children: _pages),
+      // Hidden tabs stay built but their animations (the profile's fire,
+      // the lists' entrances) are paused until they are shown again.
+      body: IndexedStack(
+        index: _index,
+        children: [for (final (index, page) in _pages.indexed) TickerMode(enabled: index == _index, child: page)],
+      ),
       bottomNavigationBar: ValorantBottomNav(
         items: _items,
         currentIndex: _index,

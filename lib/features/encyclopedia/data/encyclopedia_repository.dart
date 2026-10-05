@@ -11,7 +11,11 @@ import '../domain/weapon_skin.dart';
 
 abstract class EncyclopediaRepository {
   Future<List<Agent>> getAgents();
+  /// The guns, cheapest first: the knife is left out.
   Future<List<Weapon>> getWeapons();
+
+  /// Every weapon, the knife included.
+  Future<List<Weapon>> getAllWeapons();
   Future<List<WeaponSkin>> getWeaponSkins(String weaponUuid);
   Future<Map<String, ContentTier>> getContentTiers();
   Future<List<GameMap>> getMaps();

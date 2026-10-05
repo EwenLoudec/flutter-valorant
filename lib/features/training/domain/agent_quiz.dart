@@ -8,8 +8,8 @@ enum AgentQuestionKind {
   abilityIcon('Quelle est cette compétence ?'),
   abilityOwner('À quel agent appartient cette compétence ?'),
   abilityDescription('De quelle compétence parle cette description ?'),
-  soundOwner('À quel agent appartient cette capacité ?'),
-  abilitySound('Et quelle est cette capacité ?'),
+  soundOwner('À quel agent appartient ce son ?'),
+  abilitySound('Quelle capacité entends-tu ?'),
   weaponSilhouette('Quelle est cette arme ?'),
   weaponSkin('À quelle arme appartient ce skin ?'),
   rankIcon('Quel est ce rang ?');
@@ -49,13 +49,28 @@ class AgentQuestion {
 
   String get prompt => kind.prompt;
 
-  /// What the reveal is allowed to name. The listening pair asks which
-  /// ability right after asking whose it is, so spelling it out on the first
-  /// answer would hand the second one over.
-  String? get revealSubject {
-    if (kind != AgentQuestionKind.soundOwner) return subject;
-    return subject?.split(' · ').first;
-  }
+  /// What the reveal names once answered. Each clip is played only once in a
+  /// run, so naming the agent and the ability gives nothing away.
+  String? get revealSubject => subject;
+}
+
+const _accents = {
+  'À': 'A', 'Â': 'A', 'Ä': 'A', 'Ç': 'C', 'É': 'E', 'È': 'E', 'Ê': 'E', 'Ë': 'E', //
+  'Î': 'I', 'Ï': 'I', 'Ô': 'O', 'Ö': 'O', 'Ù': 'U', 'Û': 'U', 'Ü': 'U', 'Œ': 'OE',
+};
+
+/// The form an ability name and a clip key are compared in: upper case,
+/// without accents, without a key prefix such as "X - ", and without the
+/// plural s, so "X - Ronce barbelée" finds "Ronces barbelées".
+String soundKey(String name) {
+  final plain = name.toUpperCase().split('').map((letter) => _accents[letter] ?? letter).join();
+  return plain
+      .replaceFirst(RegExp(r'^[A-Z]\s*-\s+'), '')
+      .replaceAll(RegExp('[’`]'), "'")
+      .split(RegExp(r'\s+'))
+      .where((word) => word.isNotEmpty)
+      .map((word) => word.length > 3 && word.endsWith('S') ? word.substring(0, word.length - 1) : word)
+      .join(' ');
 }
 
 /// A ten-question run mixing every kind of question.
@@ -77,13 +92,18 @@ class AgentQuizRound {
     final playable = [for (final agent in agents) if (agent.displayIcon != null) agent];
     if (playable.length < 4) return const AgentQuizRound(questions: []);
 
-    // A builder yields one question, or two for the sound pair.
-    final builders = <List<AgentQuestion> Function()>[
-      () => [?_portrait(playable, shuffler)],
-      () => [?_abilityIcon(playable, shuffler)],
-      () => [?_abilityOwner(playable, shuffler)],
-      () => [?_abilityDescription(playable, shuffler)],
-      () => _soundPair(playable, soundsByAgent, shuffler),
+    final clipsByAgent = _playableClips(playable, soundsByAgent);
+    // Every listening question plays its own clip: never twice the same one
+    // in a run.
+    final playedClips = <String>{};
+
+    final builders = <AgentQuestion? Function()>[
+      () => _portrait(playable, shuffler),
+      () => _abilityIcon(playable, shuffler),
+      () => _soundQuestion(AgentQuestionKind.soundOwner, playable, clipsByAgent, playedClips, shuffler),
+      () => _abilityOwner(playable, shuffler),
+      () => _abilityDescription(playable, shuffler),
+      () => _soundQuestion(AgentQuestionKind.abilitySound, playable, clipsByAgent, playedClips, shuffler),
     ];
 
     final questions = <AgentQuestion>[];
@@ -92,16 +112,15 @@ class AgentQuizRound {
     // Round-robin over the kinds so a run never turns into ten portraits,
     // and never asks the same thing twice.
     for (var attempt = 0; questions.length < questionCount && attempt < questionCount * 12; attempt++) {
-      final batch = builders[attempt % builders.length]();
-      if (batch.isEmpty) continue;
-      // The sound pair goes in whole or not at all: the second question
-      // refers to the clip of the first.
-      if (questions.length + batch.length > questionCount) continue;
+      final question = builders[attempt % builders.length]();
+      if (question == null) continue;
 
-      final signature = '${batch.first.kind.name}|${batch.first.answer}|${batch.first.subject}';
+      final signature = '${question.kind.name}|${question.answer}|${question.subject}';
       if (!seen.add(signature)) continue;
 
-      questions.addAll(batch);
+      final soundUrl = question.soundUrl;
+      if (soundUrl != null) playedClips.add(soundUrl);
+      questions.add(question);
     }
 
     return AgentQuizRound(questions: questions);
@@ -162,54 +181,59 @@ class AgentQuizRound {
     );
   }
 
-  /// One clip, two questions in a row: whose ability is it, then which one.
-  static List<AgentQuestion> _soundPair(
+  /// The clips of each agent that still match one of its abilities. The clip
+  /// map is keyed by the upper-cased ability name, and Riot renames one now
+  /// and then; names are compared loosely (accents, a key prefix, plurals),
+  /// so a stale entry costs a clip and never the whole question.
+  static Map<Agent, Map<AgentAbility, String>> _playableClips(
     List<Agent> agents,
     Map<String, Map<String, String>> soundsByAgent,
-    Random shuffler,
   ) {
-    if (soundsByAgent.isEmpty) return const [];
-
-    // The clip map is keyed by the upper-cased ability name, and Riot renames
-    // one now and then: keep only the agents whose clips still match an
-    // ability, so a stale entry costs a clip and never the whole question.
-    final playable = <Agent, Map<String, AgentAbility>>{};
+    final playable = <Agent, Map<AgentAbility, String>>{};
     for (final agent in agents) {
       final sounds = soundsByAgent[agent.uuid];
       if (sounds == null) continue;
 
-      final matched = {
-        for (final ability in agent.abilities)
-          if (sounds.containsKey(ability.displayName.toUpperCase())) ability.displayName.toUpperCase(): ability,
-      };
+      final byKey = {for (final clip in sounds.entries) soundKey(clip.key): clip.value};
+      final matched = <AgentAbility, String>{};
+      for (final ability in agent.abilities) {
+        final url = byKey[soundKey(ability.displayName)];
+        if (url != null) matched[ability] = url;
+      }
       if (matched.isNotEmpty) playable[agent] = matched;
     }
-    if (playable.isEmpty) return const [];
+    return playable;
+  }
 
-    final agent = playable.keys.elementAt(shuffler.nextInt(playable.length));
-    final abilities = playable[agent]!;
-    final name = abilities.keys.elementAt(shuffler.nextInt(abilities.length));
-    final ability = abilities[name]!;
-
-    final soundUrl = soundsByAgent[agent.uuid]![name];
-    final subject = '${agent.displayName} · ${ability.displayName}';
-
-    return [
-      AgentQuestion(
-        kind: AgentQuestionKind.soundOwner,
-        soundUrl: soundUrl,
-        choices: _choices(agent.displayName, [for (final other in agents) other.displayName], shuffler),
-        answer: agent.displayName,
-        subject: subject,
-      ),
-      AgentQuestion(
-        kind: AgentQuestionKind.abilitySound,
-        soundUrl: soundUrl,
-        choices: _choices(ability.displayName, _abilityNames(agents), shuffler),
-        answer: ability.displayName,
-        subject: subject,
-      ),
+  /// A listening question on a clip the run has not played yet: whose
+  /// ability it is, or which ability it is.
+  static AgentQuestion? _soundQuestion(
+    AgentQuestionKind kind,
+    List<Agent> agents,
+    Map<Agent, Map<AgentAbility, String>> clipsByAgent,
+    Set<String> playedClips,
+    Random shuffler,
+  ) {
+    final fresh = [
+      for (final MapEntry(key: agent, value: clips) in clipsByAgent.entries)
+        for (final MapEntry(key: ability, value: url) in clips.entries)
+          if (!playedClips.contains(url)) (agent: agent, ability: ability, url: url),
     ];
+    if (fresh.isEmpty) return null;
+
+    final pick = fresh[shuffler.nextInt(fresh.length)];
+    final isOwner = kind == AgentQuestionKind.soundOwner;
+    final answer = isOwner ? pick.agent.displayName : pick.ability.displayName;
+
+    return AgentQuestion(
+      kind: kind,
+      soundUrl: pick.url,
+      choices: isOwner
+          ? _choices(answer, [for (final other in agents) other.displayName], shuffler)
+          : _choices(answer, _abilityNames(agents), shuffler),
+      answer: answer,
+      subject: '${pick.agent.displayName} · ${pick.ability.displayName}',
+    );
   }
 
   static ({Agent agent, AgentAbility ability})? _pickAbility(

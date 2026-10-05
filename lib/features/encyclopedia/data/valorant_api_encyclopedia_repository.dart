@@ -26,13 +26,15 @@ class ValorantApiEncyclopediaRepository implements EncyclopediaRepository {
 
   @override
   Future<List<Weapon>> getWeapons() async {
-    final data = await _client.getList('/weapons');
-    final weapons = data
-        .map((json) => Weapon.fromJson(json as Map<String, dynamic>))
-        .where((weapon) => weapon.category != 'Melee')
-        .toList();
+    final weapons = (await getAllWeapons()).where((weapon) => weapon.category != 'Melee').toList();
     weapons.sort((a, b) => a.cost.compareTo(b.cost));
     return weapons;
+  }
+
+  @override
+  Future<List<Weapon>> getAllWeapons() async {
+    final data = await _client.getList('/weapons');
+    return [for (final json in data) Weapon.fromJson(json as Map<String, dynamic>)];
   }
 
   @override
@@ -108,6 +110,7 @@ class ValorantApiEncyclopediaRepository implements EncyclopediaRepository {
     return CompetitiveSeason(
       episodeName: parent?['displayName'] as String? ?? '',
       actName: currentAct['displayName'] as String? ?? '',
+      actUuid: currentAct['uuid'] as String?,
     );
   }
 

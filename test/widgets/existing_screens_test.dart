@@ -74,9 +74,7 @@ const _vandal = Weapon(
   cost: 2900,
   fireRate: 9.75,
   magazineSize: 25,
-  damageRanges: [
-    DamageRange(rangeStartMeters: 0, rangeEndMeters: 50, headDamage: 160, bodyDamage: 40, legDamage: 34),
-  ],
+  damageRanges: [DamageRange(rangeStartMeters: 0, rangeEndMeters: 50, headDamage: 160, bodyDamage: 40, legDamage: 34)],
 );
 
 final _overrides = [
@@ -101,7 +99,13 @@ Future<ProviderContainer> _pump(WidgetTester tester, Widget child, {bool settle 
   await tester.pumpWidget(
     ProviderScope(
       overrides: _overrides,
-      child: MaterialApp(theme: AppTheme.theme, home: child),
+      child: MaterialApp(
+        theme: AppTheme.theme,
+        // Reduced motion: the profile's fire would never let the test settle.
+        builder: (context, child) =>
+            MediaQuery(data: MediaQuery.of(context).copyWith(disableAnimations: true), child: child!),
+        home: child,
+      ),
     ),
   );
   if (settle) {
@@ -151,12 +155,30 @@ void main() {
 
   testWidgets('map quiz page shows only map games in its history', (tester) async {
     final container = await _pump(tester, const MapQuizPage());
-    await container.read(quizProgressProvider.notifier).record(
-      QuizRun(kind: QuizKind.weapon, label: 'Armes', mode: 'mixed', score: 300, maxScore: 1000, playedAt: DateTime(2026)),
-    );
-    await container.read(quizProgressProvider.notifier).record(
-      QuizRun(kind: QuizKind.map, label: 'Ascent', mode: 'focus', score: 480, maxScore: 600, playedAt: DateTime(2026)),
-    );
+    await container
+        .read(quizProgressProvider.notifier)
+        .record(
+          QuizRun(
+            kind: QuizKind.weapon,
+            label: 'Armes',
+            mode: 'mixed',
+            score: 300,
+            maxScore: 1000,
+            playedAt: DateTime(2026),
+          ),
+        );
+    await container
+        .read(quizProgressProvider.notifier)
+        .record(
+          QuizRun(
+            kind: QuizKind.map,
+            label: 'Ascent',
+            mode: 'focus',
+            score: 480,
+            maxScore: 600,
+            playedAt: DateTime(2026),
+          ),
+        );
     await tester.pumpAndSettle();
 
     await tester.scrollUntilVisible(find.text('480 / 600'), 300);
@@ -173,8 +195,12 @@ void main() {
 
   testWidgets('profile setup and skin picker', (tester) async {
     await _pump(tester, const ProfilePage());
-    expect(find.text('RETROUVEZ VOTRE COMPTE'), findsOneWidget);
+    expect(find.text('TROUVE TON COMPTE'), findsOneWidget);
     expect(find.text('AFFICHER MON PROFIL'), findsOneWidget);
+    // Skins and tools only come with an account.
+    expect(find.textContaining('MES SKINS'), findsNothing);
+    expect(find.text('COLLECTION ET OUTILS'), findsNothing);
+    expect(find.byType(TextField), findsOneWidget);
 
     await _pump(tester, const OwnedSkinsPickerScreen());
     expect(tester.takeException(), isNull);

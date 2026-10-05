@@ -9,6 +9,7 @@ import '../../../../core/widgets/fade_in_network_image.dart';
 import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/staggered_fade_slide.dart';
 import '../../domain/weapon.dart';
+import '../../../collection/presentation/skin_prices_screen.dart';
 import '../../../tools/presentation/economy_screen.dart';
 import '../../../training/presentation/catalog_quiz_pages.dart';
 import '../../providers/encyclopedia_providers.dart';
@@ -43,6 +44,12 @@ class WeaponsTab extends ConsumerWidget {
                 subtitle: 'Silhouettes et skins',
                 isHighlighted: true,
                 onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const WeaponQuizPage())),
+              ),
+              EntryTile(
+                icon: Icons.sell_outlined,
+                title: 'PRIX',
+                subtitle: 'Tous les skins',
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SkinPricesScreen())),
               ),
             ],
           ),

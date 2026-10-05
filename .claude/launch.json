@@ -17,6 +17,22 @@
       "port": 8766
     },
     {
+      "name": "mybmw-web-release",
+      "runtimeExecutable": "C:\\src\\flutter\\bin\\flutter.bat",
+      "runtimeArgs": [
+        "run",
+        "-d",
+        "web-server",
+        "--release",
+        "--web-port",
+        "8767",
+        "--web-hostname",
+        "127.0.0.1",
+        "--dart-define-from-file=henrik.local.json"
+      ],
+      "port": 8767
+    },
+    {
       "name": "mybmw-web-sans-cle",
       "runtimeExecutable": "C:\\src\\flutter\\bin\\flutter.bat",
       "runtimeArgs": ["run", "-d", "web-server", "--web-port", "8766", "--web-hostname", "127.0.0.1"],

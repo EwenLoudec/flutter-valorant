@@ -71,8 +71,16 @@ Map<String, dynamic> v4CompetitiveMatch() => {
     _player('enemy', 'Red', score: 3900, agent: 'Omen'),
   ],
   'teams': [
-    {'team_id': 'Blue', 'won': true, 'rounds': {'won': 13, 'lost': 11}},
-    {'team_id': 'Red', 'won': false, 'rounds': {'won': 11, 'lost': 13}},
+    {
+      'team_id': 'Blue',
+      'won': true,
+      'rounds': {'won': 13, 'lost': 11},
+    },
+    {
+      'team_id': 'Red',
+      'won': false,
+      'rounds': {'won': 11, 'lost': 13},
+    },
   ],
   'rounds': [
     // Round 1: red plants, so red attacks the first half.
@@ -105,3 +113,94 @@ Map<String, dynamic> v4CompetitiveMatch() => {
   ],
 };
 
+/// The v2 featured store, as HenrikDev serves it: one bundle on sale.
+List<Map<String, dynamic>> featuredStoreFixture() => [
+  {
+    'bundle_uuid': 'bundle-1',
+    'bundle_price': 4615,
+    'whole_sale_only': false,
+    'expires_at': '2099-10-21T05:01:26.082Z',
+    'seconds_remaining': 1355427,
+    'items': [
+      {
+        'uuid': 'skin-1',
+        'name': 'Champions Phantom',
+        'image': 'https://img/skin-1.png',
+        'type': 'skin_level',
+        'amount': 1,
+        'discount_percent': 0.34,
+        'base_price': 5350,
+        'discounted_price': 3531,
+        'promo_item': false,
+      },
+      {
+        'uuid': 'card-1',
+        'name': 'Champions Dragon Card',
+        'image': 'https://img/card-1.png',
+        'type': 'player_card',
+        'amount': 1,
+        'discount_percent': 0.3,
+        'base_price': 375,
+        'discounted_price': 263,
+        'promo_item': false,
+      },
+      {
+        'uuid': 'buddy-1',
+        'name': 'Champions Buddy',
+        'image': null,
+        'type': 'buddy',
+        'amount': 2,
+        'discount_percent': 0,
+        'base_price': 475,
+        'discounted_price': 475,
+        'promo_item': false,
+      },
+      {'name': 'sans uuid'},
+    ],
+  },
+  {'bundle_uuid': ''},
+];
+
+Map<String, dynamic> _storedMatch(
+  String id, {
+  required String map,
+  required String agent,
+  required int us,
+  required int them,
+  String season = 'act-now',
+  String team = 'Red',
+  int kills = 20,
+  int deaths = 15,
+  int tier = 15,
+}) => {
+  'meta': {
+    'id': id,
+    'map': {'id': 'map-$map', 'name': map},
+    'mode': 'Competitive',
+    'started_at': '2026-09-28T19:47:39.774Z',
+    'season': {'id': season, 'short': season == 'act-now' ? 'e11a5' : 'e11a4'},
+  },
+  'stats': {
+    'team': team,
+    'character': {'id': 'agent-$agent', 'name': agent},
+    'tier': tier,
+    'score': 5000,
+    'kills': kills,
+    'deaths': deaths,
+    'assists': 4,
+    'shots': {'head': 20, 'body': 70, 'leg': 10},
+    'damage': {'made': 3000, 'received': 2800},
+  },
+  'teams': team == 'Red' ? {'red': us, 'blue': them} : {'red': them, 'blue': us},
+};
+
+/// The v1 stored matches of one act, newest first, and one game of the
+/// previous act that must not be counted.
+List<Map<String, dynamic>> storedMatchesFixture() => [
+  _storedMatch('s1', map: 'Ascent', agent: 'Jett', us: 13, them: 7, tier: 16),
+  _storedMatch('s2', map: 'Ascent', agent: 'Jett', us: 9, them: 13, team: 'Blue'),
+  _storedMatch('s3', map: 'Haven', agent: 'Omen', us: 13, them: 11, kills: 10, deaths: 20),
+  _storedMatch('s4', map: 'Ascent', agent: 'Jett', us: 12, them: 12),
+  _storedMatch('old', map: 'Split', agent: 'Raze', us: 13, them: 0, season: 'act-before', tier: 20),
+  {'meta': {}},
+];

@@ -5,6 +5,7 @@ import '../../../core/widgets/entry_tile.dart';
 import '../../collection/presentation/bundles_screen.dart';
 import '../../collection/presentation/contracts_screen.dart';
 import '../../collection/presentation/cosmetics_screen.dart';
+import '../../collection/presentation/skin_prices_screen.dart';
 import '../../tools/presentation/crosshair_screen.dart';
 import '../providers/profile_providers.dart';
 import 'profile_section.dart';
@@ -55,6 +56,17 @@ class CollectionToolsSection extends ConsumerWidget {
                 title: 'CONTRATS',
                 subtitle: 'Agents, passes et récompenses',
                 onTap: () => open(const ContractsScreen()),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          EntryTileRow(
+            tiles: [
+              EntryTile(
+                icon: Icons.sell_outlined,
+                title: 'PRIX DES SKINS',
+                subtitle: 'Tous les skins, par gamme et par arme',
+                onTap: () => open(const SkinPricesScreen()),
               ),
             ],
           ),

@@ -1,3 +1,5 @@
+import '../../../core/text/search_text.dart';
+
 /// The account cosmetics valorant-api.com lists, besides weapon skins.
 enum CosmeticKind {
   card('playercards', 'Cartes'),
@@ -91,9 +93,5 @@ class Cosmetic {
   /// Sprays and buddies have levels, which is what contracts reward.
   final List<String> levelUuids;
 
-  bool matches(String search) {
-    final query = search.trim().toLowerCase();
-    if (query.isEmpty) return true;
-    return displayName.toLowerCase().contains(query) || (titleText?.toLowerCase().contains(query) ?? false);
-  }
+  bool matches(String search) => matchesSearch(search, [displayName, titleText]);
 }

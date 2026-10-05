@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../../../core/text/search_text.dart';
 import 'lineup.dart';
 
 /// Why an import was refused, in words for the player.
@@ -98,21 +99,15 @@ abstract final class LineupTransfer {
 
 /// Text search over the spots of every map.
 extension LineupSearch on Lineup {
-  bool matches(String search) {
-    final words = search.trim().toLowerCase().split(RegExp(r'\s+')).where((word) => word.isNotEmpty);
-    if (words.isEmpty) return true;
-
-    final haystack = [
-      title,
-      agentName,
-      mapName,
-      abilityName,
-      abilityKey,
-      from.label,
-      to?.label ?? '',
-      side.label,
-      description,
-    ].join(' ').toLowerCase();
-    return words.every(haystack.contains);
-  }
+  bool matches(String search) => matchesSearch(search, [
+    title,
+    agentName,
+    mapName,
+    abilityName,
+    abilityKey,
+    from.label,
+    to?.label,
+    side.label,
+    description,
+  ]);
 }

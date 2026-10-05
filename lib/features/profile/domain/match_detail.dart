@@ -153,9 +153,7 @@ class MatchRound {
       plantSite: asStringOrNull(plant['site'] ?? plant['plant_site']),
       planterTeam: planterTeam,
       isDefused: defuse.isNotEmpty,
-      averageLoadoutByTeam: {
-        for (final team in totals.keys) team: totals[team]! / counts[team]!,
-      },
+      averageLoadoutByTeam: {for (final team in totals.keys) team: totals[team]! / counts[team]!},
     );
   }
 
@@ -227,6 +225,10 @@ class MatchKill {
     required this.weaponName,
     required this.victimX,
     required this.victimY,
+    this.weaponId,
+    this.killerTeam,
+    this.victimTeam,
+    this.assistantPuuids = const [],
   });
 
   factory MatchKill.fromJson(Map<String, dynamic> json) {
@@ -244,6 +246,13 @@ class MatchKill {
       weaponName: displayNameOf(json['weapon'] ?? json['damage_weapon_name']),
       victimX: asDoubleOrNull(location['x']),
       victimY: asDoubleOrNull(location['y']),
+      weaponId: idOf(json['weapon'])?.toLowerCase() ?? asStringOrNull(json['damage_weapon_id'])?.toLowerCase(),
+      killerTeam: asStringOrNull(killer['team'] ?? json['killer_team']),
+      victimTeam: asStringOrNull(victim['team'] ?? json['victim_team']),
+      assistantPuuids: [
+        for (final assistant in asList(json['assistants']))
+          ?asStringOrNull(asMap(assistant)['puuid'] ?? asMap(assistant)['assistant_puuid']),
+      ],
     );
   }
 
@@ -258,6 +267,12 @@ class MatchKill {
   /// Where the victim fell, in game coordinates.
   final double? victimX;
   final double? victimY;
+
+  /// valorant-api.com uuid of the weapon, lower-cased, to show its picture.
+  final String? weaponId;
+  final String? killerTeam;
+  final String? victimTeam;
+  final List<String> assistantPuuids;
 
   bool get hasLocation => victimX != null && victimY != null;
 }
@@ -410,6 +425,86 @@ class MatchDetail {
     return attacker.toLowerCase() == own.toLowerCase() ? RoundSide.attack : RoundSide.defense;
   }
 
+  /// What [puuid] did round by round: KAST, first bloods, aces, flawless
+  /// rounds, and the kills of each weapon. Null when the game has no rounds.
+  RoundHighlights? highlightsOf(String puuid) {
+    final team = teamOf(puuid);
+    if (!isRoundBased || team == null) return null;
+
+    String? teamOfPlayer(String playerPuuid, String? declared) => declared ?? teamOf(playerPuuid);
+
+    final byRound = <int, List<MatchKill>>{};
+    for (final kill in kills) {
+      byRound.putIfAbsent(kill.round, () => []).add(kill);
+    }
+
+    var kastRounds = 0;
+    var firstBloods = 0;
+    var aces = 0;
+    var flawless = 0;
+    final weaponKills = <String, WeaponKills>{};
+
+    for (final round in rounds) {
+      final roundKills = [...?byRound[round.index]]..sort((a, b) => a.timeInRoundMs.compareTo(b.timeInRoundMs));
+
+      final ownKills = roundKills.where((kill) => kill.killerPuuid == puuid && kill.victimPuuid != puuid).toList();
+      final assisted = roundKills.any((kill) => kill.assistantPuuids.contains(puuid));
+      final death = roundKills.where((kill) => kill.victimPuuid == puuid).firstOrNull;
+
+      // Traded: the one who got the player died to a teammate within 5 s.
+      var traded = false;
+      if (death != null) {
+        traded = roundKills.any(
+          (kill) =>
+              kill.victimPuuid == death.killerPuuid &&
+              kill.timeInRoundMs >= death.timeInRoundMs &&
+              kill.timeInRoundMs - death.timeInRoundMs <= tradeWindowMs &&
+              teamOfPlayer(kill.killerPuuid, kill.killerTeam)?.toLowerCase() == team.toLowerCase(),
+        );
+      }
+      if (ownKills.isNotEmpty || assisted || death == null || traded) kastRounds++;
+
+      final opening = roundKills.firstOrNull;
+      if (opening != null && opening.killerPuuid == puuid && opening.victimPuuid != puuid) firstBloods++;
+      if (ownKills.length >= 5) aces++;
+
+      final teamDeaths = roundKills.where(
+        (kill) => teamOfPlayer(kill.victimPuuid, kill.victimTeam)?.toLowerCase() == team.toLowerCase(),
+      );
+      if (round.isWonBy(team) && teamDeaths.isEmpty) flawless++;
+
+      for (final kill in ownKills) {
+        final key = (kill.weaponId ?? kill.weaponName).toLowerCase();
+        if (key.isEmpty) continue;
+        final current = weaponKills[key];
+        weaponKills[key] = WeaponKills(
+          weaponId: kill.weaponId,
+          weaponName: kill.weaponName.isNotEmpty ? kill.weaponName : current?.weaponName ?? '',
+          kills: (current?.kills ?? 0) + 1,
+        );
+      }
+    }
+
+    return RoundHighlights(
+      rounds: rounds.length,
+      kastRounds: kastRounds,
+      firstBloods: firstBloods,
+      aces: aces,
+      flawlessRounds: flawless,
+      weaponKills: weaponKills.values.toList(),
+    );
+  }
+
+  /// A kill avenged this quickly still counts the death as traded.
+  static const tradeWindowMs = 5000;
+
+  String? teamOf(String puuid) {
+    for (final player in players) {
+      if (player.puuid == puuid) return player.teamId;
+    }
+    return null;
+  }
+
   /// Pistol rounds open each half; elsewhere the loadouts tell the buy.
   BuyType? buyOf(String teamId, int roundIndex) {
     final half = _halfLength;
@@ -424,4 +519,37 @@ class MatchDetail {
 
 extension on String {
   String? get nullIfEmpty => isEmpty ? null : this;
+}
+
+/// Kills scored with one weapon.
+class WeaponKills {
+  const WeaponKills({required this.weaponId, required this.weaponName, required this.kills});
+
+  /// valorant-api.com uuid, lower-cased, when the API gives it.
+  final String? weaponId;
+  final String weaponName;
+  final int kills;
+}
+
+/// The round-level figures of one player over one match.
+class RoundHighlights {
+  const RoundHighlights({
+    required this.rounds,
+    required this.kastRounds,
+    required this.firstBloods,
+    required this.aces,
+    required this.flawlessRounds,
+    required this.weaponKills,
+  });
+
+  final int rounds;
+
+  /// Rounds with a Kill, an Assist, Survived or Traded.
+  final int kastRounds;
+  final int firstBloods;
+  final int aces;
+
+  /// Rounds the team won without losing anyone.
+  final int flawlessRounds;
+  final List<WeaponKills> weaponKills;
 }

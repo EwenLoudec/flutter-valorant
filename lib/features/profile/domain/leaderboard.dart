@@ -1,3 +1,5 @@
+import '../../../core/text/search_text.dart';
+
 import 'json_reading.dart';
 
 /// One player of the regional ranked leaderboard.
@@ -52,11 +54,7 @@ class LeaderboardPlayer {
     return 'https://media.valorant-api.com/playercards/$uuid/smallart.png';
   }
 
-  bool matches(String search) {
-    final query = search.trim().toLowerCase();
-    if (query.isEmpty) return true;
-    return label.toLowerCase().contains(query);
-  }
+  bool matches(String search) => matchesSearch(search, [label]);
 }
 
 /// The top of a region's ranked ladder.

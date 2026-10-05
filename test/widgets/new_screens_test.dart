@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -6,7 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valorant_companion/core/theme/app_theme.dart';
 import 'package:valorant_companion/features/collection/presentation/contracts_screen.dart';
 import 'package:valorant_companion/features/collection/presentation/cosmetics_screen.dart';
+import 'package:valorant_companion/features/collection/presentation/skin_prices_screen.dart';
 import 'package:valorant_companion/features/encyclopedia/domain/agent.dart';
+import 'package:valorant_companion/features/encyclopedia/domain/content_tier.dart';
 import 'package:valorant_companion/features/encyclopedia/domain/contract.dart';
 import 'package:valorant_companion/features/encyclopedia/domain/cosmetic.dart';
 import 'package:valorant_companion/features/encyclopedia/domain/game_map.dart';
@@ -16,15 +17,19 @@ import 'package:valorant_companion/features/encyclopedia/domain/weapon.dart';
 import 'package:valorant_companion/features/encyclopedia/presentation/ranks/radiant_leaderboard_screen.dart';
 import 'package:valorant_companion/features/encyclopedia/providers/encyclopedia_providers.dart';
 import 'package:valorant_companion/features/profile/data/player_repository.dart';
+import 'package:valorant_companion/features/profile/domain/featured_store.dart';
 import 'package:valorant_companion/features/profile/domain/leaderboard.dart';
 import 'package:valorant_companion/features/profile/domain/player_account.dart';
 import 'package:valorant_companion/features/profile/domain/player_match.dart';
 import 'package:valorant_companion/features/profile/domain/player_query.dart';
 import 'package:valorant_companion/features/profile/domain/player_rank.dart';
 import 'package:valorant_companion/features/profile/domain/rank_history.dart';
+import 'package:valorant_companion/features/profile/domain/stored_match.dart';
 import 'package:valorant_companion/features/profile/presentation/match_detail_screen.dart';
 import 'package:valorant_companion/features/profile/presentation/missing_api_key_notice.dart';
 import 'package:valorant_companion/features/profile/presentation/riot_id_form.dart';
+import 'package:valorant_companion/features/profile/presentation/overview_lists.dart';
+import 'package:valorant_companion/features/profile/presentation/overview_sections.dart';
 import 'package:valorant_companion/features/profile/presentation/player_stats_section.dart';
 import 'package:valorant_companion/features/profile/presentation/rank_history_section.dart';
 import 'package:valorant_companion/features/profile/providers/profile_providers.dart';
@@ -78,6 +83,13 @@ class _FakeRepository implements PlayerRepository {
         },
     ],
   });
+
+  @override
+  Future<List<FeaturedBundle>> getFeaturedStore() async => FeaturedBundle.listFromJson(featuredStoreFixture());
+
+  @override
+  Future<List<StoredMatch>> getStoredMatches(PlayerQuery query, {int size = 200}) async =>
+      StoredMatch.listFromJson(storedMatchesFixture());
 }
 
 Agent _agent(String name, String role) => Agent(
@@ -120,6 +132,8 @@ final _overrides = [
   agentsProvider.overrideWith((ref) async => _agents),
   mapsProvider.overrideWith((ref) async => _maps),
   rankTiersProvider.overrideWith((ref) async => const <RankTier>[]),
+  contentTiersProvider.overrideWith((ref) async => const <String, ContentTier>{}),
+  allWeaponsProvider.overrideWith((ref) => ref.watch(weaponsProvider.future)),
   weaponsProvider.overrideWith(
     (ref) async => const [
       Weapon(
@@ -131,6 +145,26 @@ final _overrides = [
         fireRate: 9.75,
         magazineSize: 25,
         damageRanges: [],
+        skinPreviews: [
+          WeaponSkinPreview(
+            uuid: 'v-select',
+            displayName: 'Zèbre Vandal',
+            displayIcon: 'https://img/zebre.png',
+            contentTierUuid: '12683d76-48d7-84a3-4e09-6985794f0445',
+          ),
+          WeaponSkinPreview(
+            uuid: 'v-ultra',
+            displayName: 'Aube Vandal au nom vraiment très très long pour tester',
+            displayIcon: 'https://img/aube.png',
+            contentTierUuid: '411e4a55-4e59-7757-41f0-86a53f101bb5',
+          ),
+          WeaponSkinPreview(
+            uuid: 'skin-1',
+            displayName: 'Champions Vandal',
+            displayIcon: 'https://img/champions.png',
+            contentTierUuid: 'e046854e-406c-37f4-6607-19a9ba8426fc',
+          ),
+        ],
       ),
       Weapon(
         uuid: 'operator',
@@ -201,13 +235,22 @@ Future<void> _pump(WidgetTester tester, Widget child) async {
   await tester.pumpWidget(
     ProviderScope(
       overrides: _overrides,
-      child: MaterialApp(theme: AppTheme.theme, home: child),
+      child: MaterialApp(
+        theme: AppTheme.theme,
+        // Reduced motion: the profile's fire would never let the test settle.
+        builder: (context, child) =>
+            MediaQuery(data: MediaQuery.of(context).copyWith(disableAnimations: true), child: child!),
+        home: child,
+      ),
     ),
   );
   await tester.pumpAndSettle();
 }
 
-const _query = PlayerQuery(riotId: RiotId(name: 'Moi', tag: 'EUW'), region: ValorantRegion.eu);
+const _query = PlayerQuery(
+  riotId: RiotId(name: 'Moi', tag: 'EUW'),
+  region: ValorantRegion.eu,
+);
 
 void main() {
   setUp(() {
@@ -284,20 +327,74 @@ void main() {
           children: const [
             RankHistorySection(query: _query),
             SessionSection(query: _query),
-            PlayerStatsSection(query: _query),
+            OverviewStatsSection(query: _query),
+            TopWeaponsSection(query: _query),
+            TopMapsSection(query: _query),
+            TopAgentsSection(query: _query),
+            RolesSection(query: _query),
+            SidesSection(query: _query),
           ],
         ),
       ),
     );
 
     expect(find.text('ÉVOLUTION DU RR'), findsOneWidget);
-    expect(find.text('MES AGENTS'), findsOneWidget);
-    expect(find.text('ATTAQUE'), findsOneWidget);
     expect(find.textContaining('Bilan sur 8 parties'), findsOneWidget);
-
     await tester.tapAt(tester.getCenter(find.byType(RankHistoryChart)));
     await tester.pumpAndSettle();
     expect(find.textContaining('Bilan sur'), findsNothing);
+
+    for (final title in [
+      'PERFORMANCES',
+      'MEILLEURES ARMES',
+      'MEILLEURES CARTES',
+      'MEILLEURS AGENTS',
+      'RÔLES',
+      'ATTAQUE',
+    ]) {
+      await tester.scrollUntilVisible(find.text(title), 300);
+      expect(find.text(title), findsOneWidget);
+    }
+    expect(find.text('SHERIFF'), findsOneWidget);
+    expect(find.text('DUELLISTE'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('the skin price list searches, filters and sorts', (tester) async {
+    await _pump(tester, const SkinPricesScreen());
+
+    expect(find.text('3 skins'), findsOneWidget);
+    expect(find.text('EN BOUTIQUE'), findsOneWidget, reason: 'le prix du jour vient de la boutique en vedette');
+    expect(find.text('5350'), findsOneWidget);
+    expect(find.text('875'), findsOneWidget);
+    expect(find.text('2475'), findsOneWidget);
+
+    await tester.tap(find.text('ULTRA'));
+    await tester.pumpAndSettle();
+    expect(find.text('1 skin'), findsOneWidget);
+    expect(find.text('875'), findsNothing);
+
+    await tester.tap(find.text('TOUTES'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'zèbre');
+    await tester.pumpAndSettle();
+    expect(find.text('1 skin'), findsOneWidget);
+    expect(find.text('Zèbre Vandal'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField), 'introuvable');
+    await tester.pumpAndSettle();
+    expect(find.text('Aucun skin ne correspond.'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField), '');
+    await tester.tap(find.text('Nom'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Prix décroissant').last);
+    await tester.pumpAndSettle();
+    final prices = [
+      for (final text in tester.widgetList<Text>(find.byType(Text)))
+        if (const ['5350', '2475', '875'].contains(text.data)) text.data,
+    ];
+    expect(prices, ['5350', '2475', '875']);
     expect(tester.takeException(), isNull);
   });
 

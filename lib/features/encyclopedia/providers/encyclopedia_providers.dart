@@ -30,6 +30,11 @@ final weaponsProvider = FutureProvider<List<Weapon>>((ref) {
   return ref.watch(encyclopediaRepositoryProvider).getWeapons();
 });
 
+/// Every weapon with the knife, for what concerns skins.
+final allWeaponsProvider = FutureProvider<List<Weapon>>((ref) {
+  return ref.watch(encyclopediaRepositoryProvider).getAllWeapons();
+});
+
 final contentTiersProvider = FutureProvider<Map<String, ContentTier>>((ref) {
   return ref.watch(encyclopediaRepositoryProvider).getContentTiers();
 });

@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -31,6 +33,14 @@ List<Agent> _roster() => [for (final name in ['Sova', 'Viper', 'Jett', 'Omen', '
 Map<String, Map<String, String>> _sounds() => {
   'uuid-Sova': {'SOVA ABILITY2': 'https://example.test/sova.mp4'},
   'uuid-Viper': {'VIPER GRENADE': 'https://example.test/viper.mp4'},
+};
+
+/// Every ability of every agent has a clip.
+Map<String, Map<String, String>> _manySounds() => {
+  for (final agent in _roster())
+    agent.uuid: {
+      for (final ability in agent.abilities) ability.displayName.toUpperCase(): 'https://example.test/${ability.displayName}.mp4',
+    },
 };
 
 void main() {
@@ -122,53 +132,56 @@ void main() {
       expect(kinds, isNot(contains(AgentQuestionKind.abilitySound)));
     });
 
-    test('enchaîne le propriétaire puis la capacité sur le même extrait', () {
-      var pairs = 0;
+    test('joue un nouvel extrait à chaque question sonore, jamais deux fois le même', () {
+      var heard = 0;
+      final kinds = <AgentQuestionKind>{};
 
       for (var seed = 0; seed < 12; seed++) {
         final questions = AgentQuizRound.create(
           agents: _roster(),
-          soundsByAgent: _sounds(),
+          soundsByAgent: _manySounds(),
           random: Random(seed),
         ).questions;
+        final clips = [
+          for (final question in questions)
+            if (question.soundUrl != null) question.soundUrl!,
+        ];
 
-        for (var index = 0; index < questions.length; index++) {
-          final question = questions[index];
-          if (question.kind != AgentQuestionKind.soundOwner) continue;
-
-          pairs++;
-          expect(index + 1, lessThan(questions.length), reason: 'la paire ne doit jamais être coupée');
-
-          final next = questions[index + 1];
-          expect(next.kind, AgentQuestionKind.abilitySound);
-          expect(next.soundUrl, question.soundUrl, reason: 'les deux questions écoutent le même extrait');
-          expect(next.subject, question.subject);
-
-          // D'abord à qui, ensuite laquelle.
-          expect(question.answer, question.subject!.split(' · ').first);
-          expect(next.answer, question.subject!.split(' · ').last);
+        heard += clips.length;
+        expect(clips.toSet(), hasLength(clips.length), reason: 'un extrait déjà joué ne revient pas');
+        for (final question in questions.where((q) => q.soundUrl != null)) {
+          kinds.add(question.kind);
+          final [agent, ability] = question.subject!.split(' · ');
+          expect(question.answer, question.kind == AgentQuestionKind.soundOwner ? agent : ability);
         }
       }
 
-      expect(pairs, greaterThan(0));
+      expect(heard, greaterThan(12));
+      expect(kinds, {AgentQuestionKind.soundOwner, AgentQuestionKind.abilitySound});
     });
 
-    test('ne vend pas la mèche en révélant le propriétaire', () {
+    test('s\'arrête de poser des questions sonores quand les extraits sont épuisés', () {
+      final round = AgentQuizRound.create(
+        agents: _roster(),
+        soundsByAgent: {
+          'uuid-Sova': {'SOVA ABILITY2': 'https://example.test/sova.mp4'},
+        },
+        random: Random(4),
+      );
+      final clips = round.questions.where((q) => q.soundUrl != null);
+
+      expect(round.questions, hasLength(AgentQuizRound.defaultQuestionCount));
+      expect(clips, hasLength(1));
+    });
+
+    test('révèle l\'agent et la capacité après la réponse', () {
       final round = AgentQuizRound.create(
         agents: _roster(),
         soundsByAgent: _sounds(),
         random: Random(1),
       );
-      final owners = round.questions.where((q) => q.kind == AgentQuestionKind.soundOwner);
 
-      expect(owners, isNotEmpty);
-      for (final question in owners) {
-        // La question suivante demande justement le nom de la capacité.
-        expect(question.revealSubject, question.answer);
-        expect(question.subject, isNot(question.revealSubject));
-      }
-
-      for (final question in round.questions.where((q) => q.kind != AgentQuestionKind.soundOwner)) {
+      for (final question in round.questions) {
         expect(question.revealSubject, question.subject);
       }
     });
@@ -215,5 +228,39 @@ void main() {
       expect(round.questions, isEmpty);
       expect(round.maxScore, 0);
     });
+  });
+  group('soundKey', () {
+    test('ignore les accents, le préfixe de touche et le pluriel', () {
+      expect(soundKey('Évolution'), soundKey('EVOLUTION'));
+      expect(soundKey('Transfert dimensionnel'), soundKey('X - TRANSFERT DIMENSIONNEL'));
+      expect(soundKey('Ronces barbelées'), soundKey('RONCE BARBELÉE'));
+      expect(soundKey("Jardin d’acier"), soundKey("JARDIN D'ACIER"));
+      expect(soundKey('M-Pulsion'), 'M-PULSION');
+      expect(soundKey('Vortex'), isNot(soundKey('Intercepteur')));
+    });
+
+    test('un extrait renommé par Riot reste joué', () {
+      final round = AgentQuizRound.create(
+        agents: _roster(),
+        soundsByAgent: {
+          'uuid-Sova': {'X - SOVA ULTIMATES': 'https://example.test/renomme.mp4'},
+        },
+        random: Random(3),
+      );
+      final heard = round.questions.where((q) => q.soundUrl != null).toList();
+      expect(heard, hasLength(1));
+      expect(heard.single.soundUrl, 'https://example.test/renomme.mp4');
+      expect(heard.single.subject, 'Sova · Sova Ultimate');
+    });
+  });
+
+  test('chaque extrait du jeu de données a une piste lisible', () async {
+    final data = jsonDecode(File('assets/data/ability_sounds.json').readAsStringSync()) as Map<String, dynamic>;
+    for (final clips in data.values) {
+      for (final entry in (clips as Map<String, dynamic>).entries) {
+        expect(entry.key, isNot(matches(RegExp(r'^[A-Z] - '))), reason: 'clé sans préfixe de touche');
+        expect(Uri.parse(entry.value as String).scheme, 'https');
+      }
+    }
   });
 }
