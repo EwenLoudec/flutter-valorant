@@ -6,10 +6,11 @@ import '../../../core/widgets/valorant_input.dart';
 import '../domain/player_query.dart';
 import '../domain/player_settings.dart';
 import '../providers/profile_providers.dart';
-import 'henrik_key_help.dart';
+import 'missing_api_key_notice.dart';
 
-/// Riot ID, region and API key entry. Shown full page until a profile is
-/// configured, then reopened in a sheet to edit it.
+/// Riot ID and region entry. Shown full page until a profile is configured,
+/// then reopened in a sheet to edit it. The HenrikDev key comes with the
+/// build, so there is nothing else to type.
 class RiotIdForm extends ConsumerStatefulWidget {
   const RiotIdForm({super.key, this.onSaved});
 
@@ -21,17 +22,14 @@ class RiotIdForm extends ConsumerStatefulWidget {
 
 class _RiotIdFormState extends ConsumerState<RiotIdForm> {
   final _riotIdController = TextEditingController();
-  final _apiKeyController = TextEditingController();
 
   ValorantRegion _region = ValorantRegion.eu;
   String? _riotIdError;
-  String? _apiKeyError;
   bool _initialised = false;
 
   @override
   void dispose() {
     _riotIdController.dispose();
-    _apiKeyController.dispose();
     super.dispose();
   }
 
@@ -40,23 +38,19 @@ class _RiotIdFormState extends ConsumerState<RiotIdForm> {
     _initialised = true;
 
     _riotIdController.text = settings.riotId?.label ?? '';
-    _apiKeyController.text = settings.apiKey;
     _region = settings.region;
   }
 
   Future<void> _submit() async {
     final riotId = RiotId.tryParse(_riotIdController.text);
-    final apiKey = _apiKeyController.text.trim();
 
-    setState(() {
-      _riotIdError = riotId == null ? 'Format attendu : Pseudo#TAG' : null;
-      _apiKeyError = apiKey.isEmpty ? 'Clé API requise pour interroger les serveurs Riot' : null;
-    });
-    if (riotId == null || apiKey.isEmpty) return;
+    setState(() => _riotIdError = riotId == null ? 'Format attendu : Pseudo#TAG' : null);
+    if (riotId == null) return;
 
+    final current = ref.read(playerSettingsProvider).value ?? const PlayerSettings();
     await ref
         .read(playerSettingsProvider.notifier)
-        .save(PlayerSettings(riotId: riotId, region: _region, apiKey: apiKey));
+        .save(PlayerSettings(riotId: riotId, region: _region, apiKey: current.apiKey));
 
     widget.onSaved?.call();
   }
@@ -65,6 +59,7 @@ class _RiotIdFormState extends ConsumerState<RiotIdForm> {
   Widget build(BuildContext context) {
     final settings = ref.watch(playerSettingsProvider).value;
     if (settings != null) _prefill(settings);
+    final hasKey = settings?.apiKey.isNotEmpty ?? true;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -73,7 +68,7 @@ class _RiotIdFormState extends ConsumerState<RiotIdForm> {
         ValorantFieldLabel('Riot ID'),
         TextField(
           controller: _riotIdController,
-          textInputAction: TextInputAction.next,
+          textInputAction: TextInputAction.done,
           autocorrect: false,
           decoration: valorantInputDecoration(hint: 'Pseudo#TAG', errorText: _riotIdError),
           onSubmitted: (_) => _submit(),
@@ -94,18 +89,11 @@ class _RiotIdFormState extends ConsumerState<RiotIdForm> {
           ],
           onChanged: (code) => setState(() => _region = ValorantRegion.fromCode(code)),
         ),
-        const SizedBox(height: 16),
-        ValorantFieldLabel('Clé API HenrikDev'),
-        TextField(
-          controller: _apiKeyController,
-          obscureText: true,
-          autocorrect: false,
-          decoration: valorantInputDecoration(hint: 'HDEV-…', errorText: _apiKeyError),
-          onSubmitted: (_) => _submit(),
-        ),
-        const SizedBox(height: 6),
-        const HenrikKeyHelp(),
-        const SizedBox(height: 12),
+        if (!hasKey) ...[
+          const SizedBox(height: 16),
+          const MissingApiKeyNotice(),
+        ],
+        const SizedBox(height: 20),
         FilledButton(
           onPressed: _submit,
           style: FilledButton.styleFrom(

@@ -183,15 +183,36 @@ class MatchRound {
     return null;
   }
 
-  String get resultLabel => switch (result.toLowerCase()) {
-    'elimination' => 'Élimination',
-    'bomb detonated' || 'detonate' => 'Spike explosé',
-    'bomb defused' || 'defuse' => 'Spike désamorcé',
-    'round timer expired' || 'time expired' => 'Temps écoulé',
-    'surrendered' => 'Abandon',
-    '' => '—',
-    _ => result,
+  /// The API spells the same endings several ways (`Defuse`, `Bomb defused`…),
+  /// so they are recognised by their stem.
+  RoundEnd get end {
+    final value = result.toLowerCase();
+    if (value.contains('defus')) return RoundEnd.defused;
+    if (value.contains('deton') || value.contains('explod')) return RoundEnd.detonated;
+    if (value.contains('time')) return RoundEnd.timeExpired;
+    if (value.contains('surrender')) return RoundEnd.surrendered;
+    if (value.contains('elimin')) return RoundEnd.elimination;
+    return RoundEnd.other;
+  }
+
+  String get resultLabel => switch (end) {
+    RoundEnd.other => result.isEmpty ? '—' : result,
+    final known => known.label,
   };
+}
+
+/// How a round ended.
+enum RoundEnd {
+  elimination('Élimination'),
+  detonated('Spike explosé'),
+  defused('Spike désamorcé'),
+  timeExpired('Temps écoulé'),
+  surrendered('Abandon'),
+  other('');
+
+  const RoundEnd(this.label);
+
+  final String label;
 }
 
 /// A kill, where it happened on the map and with what.
@@ -292,6 +313,16 @@ class MatchDetail {
   final List<MatchKill> kills;
 
   int get roundCount => rounds.length;
+
+  /// Deathmatch and team deathmatch come back as a single round: there is
+  /// no timeline, buy or side to show, and ACS / ADR would mean nothing.
+  bool get isRoundBased => rounds.length > 1;
+
+  /// Deathmatch puts every player in a team of their own.
+  bool get isFreeForAll => players.length > 2 && teamIds.length == players.length;
+
+  /// Everyone, best score first — the scoreboard of a free-for-all.
+  List<MatchPlayer> get playersByScore => [...players]..sort((a, b) => b.score.compareTo(a.score));
 
   /// The other team of a two-team match.
   String? get enemyTeamId {

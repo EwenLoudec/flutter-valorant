@@ -23,6 +23,8 @@ import 'package:valorant_companion/features/profile/domain/player_query.dart';
 import 'package:valorant_companion/features/profile/domain/player_rank.dart';
 import 'package:valorant_companion/features/profile/domain/rank_history.dart';
 import 'package:valorant_companion/features/profile/presentation/match_detail_screen.dart';
+import 'package:valorant_companion/features/profile/presentation/missing_api_key_notice.dart';
+import 'package:valorant_companion/features/profile/presentation/riot_id_form.dart';
 import 'package:valorant_companion/features/profile/presentation/player_stats_section.dart';
 import 'package:valorant_companion/features/profile/presentation/rank_history_section.dart';
 import 'package:valorant_companion/features/profile/providers/profile_providers.dart';
@@ -241,21 +243,35 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('leaderboard asks for the key, then shows the ladder', (tester) async {
+  testWidgets('leaderboard explains a build without key', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await _pump(tester, const RadiantLeaderboardScreen());
 
-    expect(find.text('UNE CLÉ API EST NÉCESSAIRE'), findsOneWidget);
-    expect(find.text('REJOINDRE LE DISCORD'), findsOneWidget);
-    expect(find.text('TABLEAU DE BORD'), findsOneWidget);
-    await tester.tap(find.text('AFFICHER LE CLASSEMENT'));
-    await tester.pumpAndSettle();
-    expect(find.textContaining('HDEV-'), findsWidgets);
+    expect(find.byType(MissingApiKeyNotice), findsOneWidget);
+    expect(find.byType(TextField), findsNothing, reason: 'the key is never typed by the player');
+    expect(tester.takeException(), isNull);
+  });
 
-    await tester.enterText(find.byType(TextField), 'HDEV-test-key');
-    await tester.tap(find.text('AFFICHER LE CLASSEMENT'));
+  testWidgets('profile asks only for the Riot ID and the region', (tester) async {
+    SharedPreferences.setMockInitialValues({'profile.api_key': 'HDEV-test'});
+    await _pump(tester, const Scaffold(body: SingleChildScrollView(child: RiotIdForm())));
+
+    expect(find.byType(TextField), findsOneWidget);
+    expect(find.byType(MissingApiKeyNotice), findsNothing);
+
+    await tester.enterText(find.byType(TextField), 'pas un riot id');
+    await tester.tap(find.text('AFFICHER MON PROFIL'));
     await tester.pumpAndSettle();
-    expect(find.text('#1'), findsOneWidget);
+    expect(find.text('Format attendu : Pseudo#TAG'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField), 'Moi#EUW');
+    await tester.tap(find.text('AFFICHER MON PROFIL'));
+    await tester.pumpAndSettle();
+    final container = ProviderScope.containerOf(tester.element(find.byType(RiotIdForm)));
+    final settings = container.read(playerSettingsProvider).value!;
+    expect(settings.riotId?.label, 'Moi#EUW');
+    expect(settings.apiKey, 'HDEV-test');
+    expect(settings.isComplete, isTrue);
     expect(tester.takeException(), isNull);
   });
 

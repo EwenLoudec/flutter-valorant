@@ -60,22 +60,37 @@ class MatchDetailScreen extends ConsumerWidget {
           else ...[
             ProfileSection(
               title: 'Tableau des scores',
-              child: Column(
-                children: [
-                  for (final (index, teamId) in detail.teamIds.indexed) ...[
-                    if (index > 0) const SizedBox(height: 10),
-                    _TeamScoreboard(
+              child: detail.isFreeForAll
+                  ? _TeamScoreboard(
                       detail: detail,
-                      teamId: teamId,
+                      title: 'CLASSEMENT',
+                      players: detail.playersByScore,
+                      accentColor: AppTheme.valorantRed,
                       puuid: puuid,
                       agentIcons: iconsByAgent,
                       tierIcons: tierIcons,
+                    )
+                  : Column(
+                      children: [
+                        for (final (index, teamId) in detail.teamIds.indexed) ...[
+                          if (index > 0) const SizedBox(height: 10),
+                          _TeamScoreboard(
+                            detail: detail,
+                            title: teamId == detail.playerTeamId ? 'TON ÉQUIPE' : 'ADVERSAIRES',
+                            players: detail.playersOf(teamId),
+                            accentColor: teamId == detail.playerTeamId ? matchWinColor : AppTheme.valorantRed,
+                            roundsWon: detail.isRoundBased
+                                ? detail.rounds.where((round) => round.isWonBy(teamId)).length
+                                : null,
+                            puuid: puuid,
+                            agentIcons: iconsByAgent,
+                            tierIcons: tierIcons,
+                          ),
+                        ],
+                      ],
                     ),
-                  ],
-                ],
-              ),
             ),
-            if (detail.rounds.isNotEmpty && detail.playerTeamId != null) ...[
+            if (detail.isRoundBased && detail.playerTeamId != null) ...[
               const SizedBox(height: 20),
               MatchRoundsSection(detail: detail),
               if (detail.rounds.any((round) => round.averageLoadoutByTeam.isNotEmpty)) ...[
@@ -196,28 +211,33 @@ class _MatchHeader extends StatelessWidget {
 class _TeamScoreboard extends StatelessWidget {
   const _TeamScoreboard({
     required this.detail,
-    required this.teamId,
+    required this.title,
+    required this.players,
+    required this.accentColor,
     required this.puuid,
     required this.agentIcons,
     required this.tierIcons,
+    this.roundsWon,
   });
 
   final MatchDetail detail;
-  final String teamId;
+  final String title;
+  final List<MatchPlayer> players;
+  final Color accentColor;
   final String puuid;
   final Map<String, String?> agentIcons;
   final Map<int, String?> tierIcons;
 
+  /// Shown next to the title, for round-based games only.
+  final int? roundsWon;
+
   @override
   Widget build(BuildContext context) {
-    final players = detail.playersOf(teamId);
-    final isOwnTeam = teamId == detail.playerTeamId;
-    final roundsWon = detail.rounds.where((round) => round.isWonBy(teamId)).length;
-    final color = isOwnTeam ? matchWinColor : AppTheme.valorantRed;
-    final rounds = detail.roundCount;
+    final roundsWon = this.roundsWon;
+    final rounds = detail.isRoundBased ? detail.roundCount : null;
 
     return ProfileCard(
-      accentColor: color,
+      accentColor: accentColor,
       padding: const EdgeInsets.fromLTRB(10, 10, 10, 6),
       child: Column(
         children: [
@@ -225,11 +245,11 @@ class _TeamScoreboard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  isOwnTeam ? 'TON ÉQUIPE' : 'ADVERSAIRES',
+                  title,
                   style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w900, letterSpacing: 0.6),
                 ),
               ),
-              if (rounds > 0)
+              if (roundsWon != null)
                 Text(
                   '$roundsWon manche${roundsWon > 1 ? 's' : ''}',
                   style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white70),
@@ -237,7 +257,7 @@ class _TeamScoreboard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          const _ScoreRow.header(),
+          _ScoreRow.header(isRoundBased: rounds != null),
           const Divider(height: 10),
           for (final player in players)
             _ScoreRow(
@@ -253,6 +273,8 @@ class _TeamScoreboard extends StatelessWidget {
   }
 }
 
+/// One scoreboard line. Round-based games show the per-round figures (ACS,
+/// ADR); the others show the raw score and damage.
 class _ScoreRow extends StatelessWidget {
   const _ScoreRow({
     required MatchPlayer this.player,
@@ -260,15 +282,23 @@ class _ScoreRow extends StatelessWidget {
     required this.isSelf,
     required this.agentIcon,
     required this.tierIcon,
-  });
+  }) : isRoundBased = rounds != null;
 
-  const _ScoreRow.header() : player = null, rounds = 0, isSelf = false, agentIcon = null, tierIcon = null;
+  const _ScoreRow.header({required this.isRoundBased})
+    : player = null,
+      rounds = null,
+      isSelf = false,
+      agentIcon = null,
+      tierIcon = null;
 
   final MatchPlayer? player;
-  final int rounds;
+
+  /// Rounds played, null when the game has no rounds.
+  final int? rounds;
   final bool isSelf;
   final String? agentIcon;
   final String? tierIcon;
+  final bool isRoundBased;
 
   static const _headerStyle = TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: AppTheme.valorantMuted);
   static const _valueStyle = TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white70);
@@ -277,14 +307,20 @@ class _ScoreRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final player = this.player;
     if (player == null) {
-      return const Row(
+      return Row(
         children: [
-          SizedBox(width: 54),
-          Expanded(child: Text('JOUEUR', style: _headerStyle)),
-          SizedBox(width: 62, child: Text('K / D / A', textAlign: TextAlign.center, style: _headerStyle)),
-          SizedBox(width: 34, child: Text('ACS', textAlign: TextAlign.right, style: _headerStyle)),
-          SizedBox(width: 34, child: Text('HS %', textAlign: TextAlign.right, style: _headerStyle)),
-          SizedBox(width: 34, child: Text('ADR', textAlign: TextAlign.right, style: _headerStyle)),
+          const SizedBox(width: 54),
+          const Expanded(child: Text('JOUEUR', style: _headerStyle)),
+          const SizedBox(width: 62, child: Text('K / D / A', textAlign: TextAlign.center, style: _headerStyle)),
+          SizedBox(
+            width: 38,
+            child: Text(isRoundBased ? 'ACS' : 'SCORE', textAlign: TextAlign.right, style: _headerStyle),
+          ),
+          const SizedBox(width: 30, child: Text('HS %', textAlign: TextAlign.right, style: _headerStyle)),
+          SizedBox(
+            width: 38,
+            child: Text(isRoundBased ? 'ADR' : 'DÉG.', textAlign: TextAlign.right, style: _headerStyle),
+          ),
         ],
       );
     }
@@ -292,6 +328,9 @@ class _ScoreRow extends StatelessWidget {
     final agentIcon = this.agentIcon;
     final tierIcon = this.tierIcon;
     final headshotPercent = player.headshotPercent;
+    final rounds = this.rounds;
+    final score = rounds == null ? player.score : player.averageCombatScore(rounds).round();
+    final damage = rounds == null ? player.damageDealt : player.averageDamage(rounds).round();
 
     return Container(
       color: isSelf ? Colors.white.withValues(alpha: 0.06) : null,
@@ -332,16 +371,9 @@ class _ScoreRow extends StatelessWidget {
               style: _valueStyle,
             ),
           ),
+          SizedBox(width: 38, child: Text('$score', textAlign: TextAlign.right, style: _valueStyle)),
           SizedBox(
-            width: 34,
-            child: Text(
-              player.averageCombatScore(rounds).round().toString(),
-              textAlign: TextAlign.right,
-              style: _valueStyle,
-            ),
-          ),
-          SizedBox(
-            width: 34,
+            width: 30,
             child: Text(
               headshotPercent == null ? '—' : headshotPercent.round().toString(),
               textAlign: TextAlign.right,
@@ -349,9 +381,9 @@ class _ScoreRow extends StatelessWidget {
             ),
           ),
           SizedBox(
-            width: 34,
+            width: 38,
             child: Text(
-              player.damageDealt == 0 ? '—' : player.averageDamage(rounds).round().toString(),
+              player.damageDealt == 0 ? '—' : '$damage',
               textAlign: TextAlign.right,
               style: _valueStyle,
             ),

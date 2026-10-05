@@ -5,11 +5,12 @@ import '../domain/match_detail.dart';
 import 'match_detail_screen.dart';
 import 'profile_section.dart';
 
-IconData _resultIcon(MatchRound round) => switch (round.result.toLowerCase()) {
-  'bomb detonated' || 'detonate' => Icons.local_fire_department,
-  'bomb defused' || 'defuse' => Icons.handyman_outlined,
-  'round timer expired' || 'time expired' => Icons.timer_outlined,
-  _ => Icons.close,
+IconData _resultIcon(MatchRound round) => switch (round.end) {
+  RoundEnd.detonated => Icons.local_fire_department,
+  RoundEnd.defused => Icons.handyman_outlined,
+  RoundEnd.timeExpired => Icons.timer_outlined,
+  RoundEnd.surrendered => Icons.flag_outlined,
+  RoundEnd.elimination || RoundEnd.other => Icons.close,
 };
 
 /// The rounds in order: who took each one, how, and on which side.
